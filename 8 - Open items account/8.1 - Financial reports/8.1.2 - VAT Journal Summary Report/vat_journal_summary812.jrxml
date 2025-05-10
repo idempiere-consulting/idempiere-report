@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vat_journal_summary812" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="vat_journal_summary812" whenResourceMissingType="Empty" uuid="0a81b9c9-15f9-484d-bac0-0cdeae140aa6">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vat_journal_summary812" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" resourceBundle="vat_journal_summary812" whenResourceMissingType="Empty" uuid="0a81b9c9-15f9-484d-bac0-0cdeae140aa6">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempieredb-report"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -54,7 +54,9 @@
      ad_client.ad_client_id,
      lit_vat_period."name" AS lit_vat_period_name,
      lit_vat_period."lit_vat_period_id" AS lit_vat_period_lit_vat_period_id,
-     ad_orginfo.LIT_Prorata/100 as lit_prorata
+     ad_orginfo.LIT_Prorata/100 as lit_prorata,
+ 	 lit_adorg_banner_image($P{AD_Org_ID} ),
+	 lit_adorg_footer_image($P{AD_Org_ID} )
 FROM
      ad_client
 	 inner join ad_orginfo on ad_client.ad_client_id=ad_orginfo.ad_client_id
@@ -85,6 +87,14 @@ WHERE
 		<property name="com.jaspersoft.studio.field.name" value="lit_prorata"/>
 		<property name="com.jaspersoft.studio.field.label" value="lit_prorata"/>
 	</field>
+	<field name="lit_adorg_banner_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_banner_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_banner_image"/>
+	</field>
+	<field name="lit_adorg_footer_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_footer_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_footer_image"/>
+	</field>
 	<variable name="IVA_DEBITO" class="java.math.BigDecimal" calculation="System"/>
 	<variable name="IVA_CREDITO" class="java.math.BigDecimal" calculation="System"/>
 	<variable name="IVA_DEBITO_REGRESSO" class="java.math.BigDecimal" calculation="System"/>
@@ -93,19 +103,6 @@ WHERE
 	<variable name="IVA_CREDITOPREC" class="java.math.BigDecimal" calculation="System"/>
 	<title>
 		<band height="84">
-			<subreport isUsingCache="true">
-				<reportElement key="subreport-2" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="61" isRemoveLineWhenBlank="true" uuid="0f0f970b-fcca-4350-af7b-26bfaae3ee02">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<subreportParameter name="AD_ORG_ID">
-					<subreportParameterExpression><![CDATA[$P{AD_Org_ID}]]></subreportParameterExpression>
-				</subreportParameter>
-				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
-					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+  "header_portrait.jasper"]]></subreportExpression>
-			</subreport>
 			<textField>
 				<reportElement positionType="Float" x="0" y="70" width="555" height="14" uuid="1304d2e8-c017-4e09-94ec-2ee28fd081e4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -116,6 +113,12 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$R{title} + " " + $F{lit_vat_period_name}]]></textFieldExpression>
 			</textField>
+			<image onErrorType="Blank">
+				<reportElement x="-20" y="0" width="595" height="70" uuid="b0855581-a208-4561-9811-4db76c8af1a0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{lit_adorg_banner_image}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>
@@ -297,7 +300,7 @@ $V{IVA_DEBITO}.subtract($V{IVA_CREDITO}).add($V{IVA_CREDITO}.multiply( $F{lit_pr
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="19">
+		<band height="92">
 			<textField textAdjust="StretchHeight">
 				<reportElement x="0" y="5" width="136" height="14" uuid="78690f53-cb2e-4689-8055-8a9312bfe6f4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -315,8 +318,14 @@ $V{IVA_DEBITO}.subtract($V{IVA_CREDITO}).add($V{IVA_CREDITO}.multiply( $F{lit_pr
 				</reportElement>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} + "/"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
+			<image onErrorType="Blank">
+				<reportElement x="-20" y="22" width="595" height="70" uuid="259b1e47-be5d-4e62-b79a-f321aeaacd15">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{lit_adorg_footer_image}]]></imageExpression>
+			</image>
 		</band>
 	</pageFooter>
 </jasperReport>
