@@ -36,13 +36,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="RECORD_ID" class="java.lang.Integer" isForPrompting="false"/>
-	<parameter name="AD_USER_ID" class="java.lang.Integer" isForPrompting="false">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
-	<parameter name="AD_ROLE_ID" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
-	<parameter name="RESOURCE" class="java.util.PropertyResourceBundle" isForPrompting="false"/>
 	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
 	<parameter name="LIT_VAT_Period_ID" class="java.lang.Integer"/>
 	<parameter name="LIT_IsExcludeLIPE" class="java.lang.String"/>
@@ -101,8 +95,8 @@ WHERE
 	<variable name="IVA_CREDITO_REGRESSO" class="java.math.BigDecimal" calculation="System"/>
 	<variable name="SALDO_IVA_REGRESSO" class="java.math.BigDecimal" calculation="System"/>
 	<variable name="IVA_CREDITOPREC" class="java.math.BigDecimal" calculation="System"/>
-	<title>
-		<band height="84">
+	<pageHeader>
+		<band height="92">
 			<textField>
 				<reportElement positionType="Float" x="0" y="70" width="555" height="14" uuid="1304d2e8-c017-4e09-94ec-2ee28fd081e4">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -120,7 +114,7 @@ WHERE
 				<imageExpression><![CDATA[$F{lit_adorg_banner_image}]]></imageExpression>
 			</image>
 		</band>
-	</title>
+	</pageHeader>
 	<detail>
 		<band height="14" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>

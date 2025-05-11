@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="c_invoice_withholding_sub_payschedule" pageWidth="250" pageHeight="58" whenNoDataType="AllSectionsNoDetail" columnWidth="250" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="670eec42-47d1-4fbf-9e15-577428c8c829">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="RECORD_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RESOURCE" class="java.util.PropertyResourceBundle" isForPrompting="false"/>
+	<parameter name="AD_LANGUAGE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     c_invoicepayschedule."dueamt" AS c_invoicepayschedule_dueamt,
+     c_invoicepayschedule."duedate" AS c_invoicepayschedule_duedate,
+     c_invoicepayschedule."c_invoice_id" AS c_invoicepayschedule_c_invoice_id,
+     c_invoice."ispaid" AS c_invoice_ispaid
+FROM
+     "adempiere"."c_invoice" c_invoice INNER JOIN "adempiere"."c_invoicepayschedule" c_invoicepayschedule ON c_invoice."c_invoice_id" = c_invoicepayschedule."c_invoice_id"
+WHERE
+     c_invoicepayschedule."c_invoice_id" = $P{RECORD_ID}
+order by  c_invoicepayschedule."duedate"]]>
+	</queryString>
+	<field name="c_invoicepayschedule_dueamt" class="java.math.BigDecimal"/>
+	<field name="c_invoicepayschedule_duedate" class="java.sql.Timestamp"/>
+	<field name="c_invoicepayschedule_c_invoice_id" class="java.math.BigDecimal"/>
+	<field name="c_invoice_ispaid" class="java.lang.String"/>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<frame>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="250" height="20" forecolor="#999999" backcolor="#D9D9D9" uuid="f5b99816-ce64-48ab-bf38-a26b533b2698">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+			</frame>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="125" y="4" width="125" height="12" forecolor="#333333" backcolor="#FFFFFF" uuid="9418da4c-8cab-4058-900a-726dfeedf900">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Dialog" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single" rightIndent="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{RESOURCE}.getString("payschedule_dueamt_"+$P{AD_LANGUAGE})]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="4" width="125" height="12" forecolor="#333333" uuid="096da98e-f7e2-43df-bb34-ab6960f8d169">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Dialog" size="8"/>
+					<paragraph lineSpacing="Single" leftIndent="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{RESOURCE}.getString("payschedule_duedate_"+$P{AD_LANGUAGE})]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<frame>
+				<reportElement positionType="Float" x="0" y="0" width="250" height="20" forecolor="#999999" backcolor="#DFDFDF" uuid="02987686-4299-4b94-8447-0decbd1d6974"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+			</frame>
+			<textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="125" y="5" width="125" height="12" uuid="c27120cc-da36-4c16-b05e-d845b2f7a393">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+					<paragraph lineSpacing="Single" rightIndent="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_invoicepayschedule_dueamt}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="5" width="125" height="12" uuid="a7f5fb6d-c9d1-4360-9719-fe5ac03508a7">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="8"/>
+					<paragraph lineSpacing="Single" leftIndent="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_invoicepayschedule_duedate}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
