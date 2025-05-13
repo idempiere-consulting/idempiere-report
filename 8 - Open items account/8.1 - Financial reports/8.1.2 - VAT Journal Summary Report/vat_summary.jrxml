@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vat_summary_debit" pageWidth="555" pageHeight="595" orientation="Landscape" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="vat_journal_summary812" uuid="2362cb52-50cd-42c8-9c34-1d300881dece">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vat_summary_debit" pageWidth="555" pageHeight="595" orientation="Landscape" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="2362cb52-50cd-42c8-9c34-1d300881dece">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempieredb-report"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -260,7 +260,7 @@ dateacct,vatdocumentno]]>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{document}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[str("DocumentNo")]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="100" y="0" width="136" height="13" uuid="03a78175-7c53-410c-9ab6-a773f1cd86bd"/>
@@ -268,7 +268,7 @@ dateacct,vatdocumentno]]>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{document_type}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[str("DocumentType")]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="236" y="0" width="96" height="13" uuid="0713d8c2-1834-47fa-b418-6a00d3b6204e">
@@ -278,7 +278,7 @@ dateacct,vatdocumentno]]>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{vatable}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[str("LIT_RP_812_VAT_Vatable")]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="332" y="0" width="223" height="13" uuid="4a53c11e-3870-4e2a-a1ca-62cb2f87f97e"/>
@@ -288,7 +288,7 @@ dateacct,vatdocumentno]]>
 					<textElement textAlignment="Right">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{debit}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[str("LIT_RP_812_Debit")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -324,7 +324,7 @@ dateacct,vatdocumentno]]>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$R{total}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[str("LIT_RP_812_Total")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -345,7 +345,7 @@ dateacct,vatdocumentno]]>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["D".equals($P{LIT_AccountSign}) ? $R{vat_debit} : $R{vat_credit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_812_VAT_" + ("D".equals($P{LIT_AccountSign}) ? "Debit" : "Credit"))]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -438,7 +438,7 @@ dateacct,vatdocumentno]]>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["D".equals($P{LIT_AccountSign}) ? $R{total_debit} : $R{total_credit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_812_Total" + ("D".equals($P{LIT_AccountSign}) ? "Debit" : "Credit"))]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="0" width="555" height="1" uuid="d0576488-ef1b-48fc-b9f0-7dbf8794439e">

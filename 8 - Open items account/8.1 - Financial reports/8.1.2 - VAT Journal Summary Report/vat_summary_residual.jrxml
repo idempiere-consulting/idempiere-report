@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tax_id_group" pageWidth="555" pageHeight="790" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" resourceBundle="vat_journal_summary812" uuid="0a81b9c9-15f9-484d-bac0-0cdeae140aa6">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tax_id_group" pageWidth="555" pageHeight="790" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="0a81b9c9-15f9-484d-bac0-0cdeae140aa6">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -74,9 +74,9 @@ lit_vat_period_id=$P{LIT_VAT_Period_ID}-1]]>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{vat_early_credit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_812_VatEarlyCredit")]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00 ¤">
+			<textField pattern="#,##0.00 ¤" isBlankWhenNull="true">
 				<reportElement x="438" y="0" width="116" height="13" uuid="5b173d43-c2ac-4c76-b493-bcedb90bd855">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -92,7 +92,7 @@ lit_vat_period_id=$P{LIT_VAT_Period_ID}-1]]>
 	<noData>
 		<band height="13">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField pattern="#,##0.00 ¤">
+			<textField pattern="#,##0.00 ¤" isBlankWhenNull="true">
 				<reportElement x="438" y="0" width="116" height="13" uuid="3cb5a471-11e3-4d7d-baa2-2011d424ad74">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -108,7 +108,7 @@ lit_vat_period_id=$P{LIT_VAT_Period_ID}-1]]>
 				<textElement verticalAlignment="Middle">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{vat_early_credit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_812_VatEarlyCredit")]]></textFieldExpression>
 			</textField>
 		</band>
 	</noData>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Balance by group" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="0" bottomMargin="0" resourceBundle="balancebygroup863" uuid="54b82708-10ed-4aae-8e76-e64d8e4d35ad">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Balance by group" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="0" bottomMargin="0" uuid="54b82708-10ed-4aae-8e76-e64d8e4d35ad">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.0"/>
@@ -66,8 +66,8 @@
 	and (b.validto is null or b.validto <= current_timestamp)
 )
 SELECT tree[1] as t1, tree[2] as t2, tree[3] as t3, tree[4] as t4, tree[5] as t5, tree[6] as t6, value, name, dare, avere,
- 	 lit_adorg_banner_image($P{AD_Org_ID} ),
-	 lit_adorg_footer_image($P{AD_Org_ID} )
+ 	 lit_adorg_header_landscape_image($P{AD_Org_ID} ),
+	 lit_adorg_footer_landscape_image($P{AD_Org_ID} )
 FROM "hierarchy" as g
 inner join (
 select
@@ -159,13 +159,13 @@ order by sortable]]>
 		<property name="com.jaspersoft.studio.field.name" value="avere"/>
 		<property name="com.jaspersoft.studio.field.label" value="avere"/>
 	</field>
-	<field name="lit_adorg_banner_image" class="byte[]">
-		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_banner_image"/>
-		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_banner_image"/>
+	<field name="lit_adorg_header_landscape_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_header_landscape_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_header_landscape_image"/>
 	</field>
-	<field name="lit_adorg_footer_image" class="byte[]">
-		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_footer_image"/>
-		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_footer_image"/>
+	<field name="lit_adorg_footer_landscape_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_footer_landscape_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_footer_landscape_image"/>
 	</field>
 	<variable name="total_dare" class="java.math.BigDecimal" resetType="Master" calculation="Sum">
 		<variableExpression><![CDATA[$F{dare}]]></variableExpression>
@@ -314,7 +314,9 @@ order by sortable]]>
 	<pageHeader>
 		<band height="108">
 			<textField>
-				<reportElement key="staticText" x="0" y="70" width="470" height="32" uuid="a3f1dbfd-d371-46e5-a87b-1f100b234fd5"/>
+				<reportElement key="staticText" x="0" y="70" width="470" height="15" uuid="a3f1dbfd-d371-46e5-a87b-1f100b234fd5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -322,27 +324,12 @@ order by sortable]]>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font size="24"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$R{title}]]></textFieldExpression>
-			</textField>
-			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
-				<reportElement key="textField" x="571" y="87" width="211" height="15" uuid="e325e6dc-dbd6-4436-8f83-bdcc4eae2fa2">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[DATEFORMAT($P{DateAcct1}, "dd/MM/yyyy" ) + " - " + DATEFORMAT($P{DateAcct2}, "dd/MM/yyyy")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_863_Title")]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement key="staticText-3" x="570" y="70" width="212" height="15" uuid="50694cbc-78f7-46b9-b537-dff7e7ef9793">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
+				<reportElement key="textField" x="0" y="85" width="470" height="15" uuid="e325e6dc-dbd6-4436-8f83-bdcc4eae2fa2">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
@@ -351,16 +338,16 @@ order by sortable]]>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{period}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[DATEFORMAT($P{DateAcct1}, "dd/MM/yyyy" ) + " - " + DATEFORMAT($P{DateAcct2}, "dd/MM/yyyy")]]></textFieldExpression>
 			</textField>
 			<image onErrorType="Blank">
 				<reportElement x="-30" y="0" width="842" height="70" uuid="60449ee1-1a6f-4f98-ae89-84a944c295e5">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<imageExpression><![CDATA[$F{lit_adorg_banner_image}]]></imageExpression>
+				<imageExpression><![CDATA[$F{lit_adorg_header_landscape_image}]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
@@ -379,7 +366,7 @@ order by sortable]]>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{account}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("Account")]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement mode="Opaque" x="110" y="0" width="372" height="18" backcolor="#9B9B9B" uuid="3cbf8c77-7494-42ab-946f-02bd35b2558f">
@@ -394,7 +381,7 @@ order by sortable]]>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{description}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("Description")]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement mode="Opaque" x="482" y="0" width="100" height="18" backcolor="#9B9B9B" uuid="8f0ab2fa-e95d-46db-acd7-51b7f897f018">
@@ -410,7 +397,7 @@ order by sortable]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{debit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_863_Debit")]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement mode="Opaque" x="582" y="0" width="100" height="18" backcolor="#9B9B9B" uuid="c8ecf772-8316-457e-969b-6dd16da6b3c2">
@@ -426,7 +413,7 @@ order by sortable]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{credit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_863_Credit")]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont">
 				<reportElement mode="Opaque" x="682" y="0" width="100" height="18" backcolor="#9B9B9B" uuid="c179295e-b35f-4668-a98d-c53a80922559">
@@ -442,7 +429,7 @@ order by sortable]]>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{amount}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_863_Amount")]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
@@ -456,7 +443,7 @@ order by sortable]]>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
@@ -470,7 +457,7 @@ order by sortable]]>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
@@ -484,7 +471,7 @@ order by sortable]]>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
@@ -498,7 +485,7 @@ order by sortable]]>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
@@ -512,7 +499,7 @@ order by sortable]]>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Dotted" lineColor="#999999"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
@@ -540,20 +527,11 @@ order by sortable]]>
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="683" y="9" width="74" height="10" uuid="90328f77-8134-4256-a55f-22bd62b7b718">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Right">
-					<font fontName="dialog" size="7" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}+" / "]]></textFieldExpression>
-			</textField>
 			<image onErrorType="Blank">
 				<reportElement x="-30" y="22" width="842" height="70" uuid="26677402-26d1-48a7-9644-cc2c267b5b52">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<imageExpression><![CDATA[$F{lit_adorg_footer_image}]]></imageExpression>
+				<imageExpression><![CDATA[$F{lit_adorg_footer_landscape_image}]]></imageExpression>
 			</image>
 		</band>
 	</pageFooter>
@@ -563,7 +541,7 @@ order by sortable]]>
 				<reportElement x="482" y="10" width="100" height="15" uuid="3772ad14-5a9d-4298-8772-10330e1f4b2d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<box>
+				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -584,13 +562,13 @@ order by sortable]]>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$R{total}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("Total")]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont" pattern="#,##0.00 €">
 				<reportElement x="582" y="10" width="100" height="15" uuid="1a1cf076-a787-4d30-a942-8b0dde0fe932">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<box>
+				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -603,7 +581,7 @@ order by sortable]]>
 				<reportElement x="682" y="10" width="100" height="15" uuid="35d8bac5-c2cf-414f-9bd9-2ff402366934">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<box>
+				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>

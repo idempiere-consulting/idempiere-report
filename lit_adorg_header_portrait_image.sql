@@ -1,8 +1,8 @@
--- FUNCTION: adempiere.lit_adorg_banner_image(numeric)
+-- FUNCTION: adempiere.lit_adorg_header_portrait_image(numeric)
 
--- DROP FUNCTION IF EXISTS adempiere.lit_adorg_banner_image(numeric);
+-- DROP FUNCTION IF EXISTS adempiere.lit_adorg_header_portrait_image(numeric);
 
-CREATE OR REPLACE FUNCTION adempiere.lit_adorg_banner_image(
+CREATE OR REPLACE FUNCTION adempiere.lit_adorg_header_portrait_image(
 	p_org_id numeric)
     RETURNS bytea
     LANGUAGE 'plpgsql'
@@ -21,5 +21,5 @@ BEGIN
 END;
 $BODY$;
 
-ALTER FUNCTION adempiere.lit_adorg_banner_image(numeric)
+ALTER FUNCTION adempiere.lit_adorg_header_portrait_image(numeric)
     OWNER TO adempiere;

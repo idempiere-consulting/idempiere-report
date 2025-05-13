@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vat_journal_summary812" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" resourceBundle="vat_journal_summary812" whenResourceMissingType="Empty" uuid="0a81b9c9-15f9-484d-bac0-0cdeae140aa6">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vat_journal_summary812" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="0a81b9c9-15f9-484d-bac0-0cdeae140aa6">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempiere"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempieredb-report"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -49,8 +49,8 @@
      lit_vat_period."name" AS lit_vat_period_name,
      lit_vat_period."lit_vat_period_id" AS lit_vat_period_lit_vat_period_id,
      ad_orginfo.LIT_Prorata/100 as lit_prorata,
- 	 lit_adorg_banner_image($P{AD_Org_ID} ),
-	 lit_adorg_footer_image($P{AD_Org_ID} )
+ 	 lit_adorg_header_portrait_image($P{AD_Org_ID} ),
+	 lit_adorg_footer_portrait_image($P{AD_Org_ID} )
 FROM
      ad_client
 	 inner join ad_orginfo on ad_client.ad_client_id=ad_orginfo.ad_client_id
@@ -81,13 +81,13 @@ WHERE
 		<property name="com.jaspersoft.studio.field.name" value="lit_prorata"/>
 		<property name="com.jaspersoft.studio.field.label" value="lit_prorata"/>
 	</field>
-	<field name="lit_adorg_banner_image" class="byte[]">
-		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_banner_image"/>
-		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_banner_image"/>
+	<field name="lit_adorg_header_portrait_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_header_portrait_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_header_portrait_image"/>
 	</field>
-	<field name="lit_adorg_footer_image" class="byte[]">
-		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_footer_image"/>
-		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_footer_image"/>
+	<field name="lit_adorg_footer_portrait_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_footer_portrait_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_footer_portrait_image"/>
 	</field>
 	<variable name="IVA_DEBITO" class="java.math.BigDecimal" calculation="System"/>
 	<variable name="IVA_CREDITO" class="java.math.BigDecimal" calculation="System"/>
@@ -105,13 +105,13 @@ WHERE
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{title} + " " + $F{lit_vat_period_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_812_Title") + " " + $F{lit_vat_period_name}]]></textFieldExpression>
 			</textField>
 			<image onErrorType="Blank">
 				<reportElement x="-20" y="0" width="595" height="70" uuid="b0855581-a208-4561-9811-4db76c8af1a0">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<imageExpression><![CDATA[$F{lit_adorg_banner_image}]]></imageExpression>
+				<imageExpression><![CDATA[$F{lit_adorg_header_portrait_image}]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
@@ -137,6 +137,9 @@ WHERE
 				</subreportParameter>
 				<subreportParameter name="LIT_AccountSign">
 					<subreportParameterExpression><![CDATA["D"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<returnValue subreportVariable="vat_c_invoicetax_taxamt3" toVariable="IVA_DEBITO"/>
@@ -165,6 +168,9 @@ WHERE
 				<subreportParameter name="LIT_AccountSign">
 					<subreportParameterExpression><![CDATA["C"]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<returnValue subreportVariable="vat_c_invoicetax_taxamt3" toVariable="IVA_CREDITO"/>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "vat_summary.jasper"]]></subreportExpression>
@@ -182,11 +188,14 @@ WHERE
 				<subreportParameter name="LIT_VAT_Period_ID">
 					<subreportParameterExpression><![CDATA[$P{LIT_VAT_Period_ID}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<returnValue subreportVariable="vdiff" toVariable="IVA_CREDITOPREC"/>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "vat_summary_residual.jasper"]]></subreportExpression>
 			</subreport>
-			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="469" y="42" width="86" height="14" forecolor="#000000" backcolor="#BFBFBF" uuid="d92fe68e-93d8-4d99-96c3-535ccde1aece">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -205,9 +214,9 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{difference}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_812_Difference")]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Transparent" x="210" y="9" width="345" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d65d200d-9e3a-4eea-acec-2bed099dcd12">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -241,7 +250,7 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{vat_deducted}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_812_VAT_Deducted")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" mode="Opaque" x="0" y="28" width="469" height="14" backcolor="#BFBFBF" uuid="42cdf338-787c-471d-8b75-7a39a2abf706">
@@ -251,9 +260,9 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$R{total_credit}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_RP_812_TotalCredit")]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="469" y="28" width="86" height="14" forecolor="#000000" backcolor="#BFBFBF" uuid="33f24ee9-5c44-4424-b21d-a7130d115ab0">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -289,37 +298,45 @@ $V{IVA_DEBITO}.subtract($V{IVA_CREDITO}).add($V{IVA_CREDITO}.multiply( $F{lit_pr
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($V{IVA_CREDITOPREC}.intValue() - ($V{IVA_DEBITO}.intValue()-$V{IVA_CREDITO}.intValue()) > 0 ? $R{credit_period} : $R{vat_due})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{IVA_CREDITOPREC}.intValue() - ($V{IVA_DEBITO}.intValue()-$V{IVA_CREDITO}.intValue()) > 0 ? str("LIT_RP_812_CreditPeriod") : str("LIT_RP_812_VatDue"))]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<pageFooter>
 		<band height="92">
-			<textField textAdjust="StretchHeight">
-				<reportElement x="0" y="5" width="136" height="14" uuid="78690f53-cb2e-4689-8055-8a9312bfe6f4">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-				</reportElement>
-				<box leftPadding="2" rightPadding="2"/>
-				<textElement verticalAlignment="Middle">
-					<font isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["RP.812" + " - " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new Date())]]></textFieldExpression>
-			</textField>
-			<textField textAdjust="StretchHeight">
-				<reportElement positionType="Float" x="475" y="5" width="80" height="14" uuid="ff4c39c3-bf2b-414e-8f47-bccceaf97172">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box leftPadding="2" rightPadding="2"/>
-				<textElement textAlignment="Right"/>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
 			<image onErrorType="Blank">
 				<reportElement x="-20" y="22" width="595" height="70" uuid="259b1e47-be5d-4e62-b79a-f321aeaacd15">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
-				<imageExpression><![CDATA[$F{lit_adorg_footer_image}]]></imageExpression>
+				<imageExpression><![CDATA[$F{lit_adorg_footer_portrait_image}]]></imageExpression>
 			</image>
+			<textField evaluationTime="Report">
+				<reportElement x="530" y="0" width="24" height="10" uuid="cf6d6767-4d67-45ec-a75d-97d490eb795e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font fontName="dialog" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="74" height="10" uuid="5c58a155-268d-4795-a66c-54cd08228046">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right">
+					<font fontName="dialog" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}+" / "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="113" height="10" uuid="3c56a544-a39e-4e66-9c6f-c4f56d7fc42e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="dialog" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RP.812" + " - " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new Date())]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageFooter>
 </jasperReport>
