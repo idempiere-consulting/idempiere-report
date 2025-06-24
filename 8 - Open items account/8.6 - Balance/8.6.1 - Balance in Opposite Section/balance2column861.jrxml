@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Report Bilancio Sezioni Contrapposte" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" uuid="1bb97c55-5ec1-4004-a515-53066d34e11b">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="64"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempieredb-report"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AD_CLIENT_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000002]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_AcctSchema_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000001]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateAcct1" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA["2025-01-01"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateAcct2" class="java.sql.Timestamp">
+		<defaultValueExpression><![CDATA["2025-12-31"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="NotPrintClosingPosting" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="StampaSottoconto" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="AD_Org_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1000002]]></defaultValueExpression>
+	</parameter>
+	<parameter name="ExcludeVoided" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="C_DocType_ID" class="java.math.BigDecimal" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new BigDecimal(0)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IsOnlyActual" class="java.lang.String">
+		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 
+ 	 lit_adorg_header_portrait_image($P{AD_Org_ID} ),
+	 lit_adorg_footer_portrait_image($P{AD_Org_ID} )
+from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
+	</queryString>
+	<field name="lit_adorg_header_portrait_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_header_portrait_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_header_portrait_image"/>
+	</field>
+	<field name="lit_adorg_footer_portrait_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_footer_portrait_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_footer_portrait_image"/>
+	</field>
+	<variable name="SubAtt" class="java.math.BigDecimal"/>
+	<variable name="SubPas" class="java.math.BigDecimal"/>
+	<variable name="SubPer" class="java.math.BigDecimal"/>
+	<variable name="SubPro" class="java.math.BigDecimal">
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<pageHeader>
+		<band height="104" splitType="Stretch">
+			<image onErrorType="Blank">
+				<reportElement x="-20" y="0" width="595" height="70" uuid="81a548b6-080f-407b-bee4-bf05faa11c91">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{lit_adorg_header_portrait_image}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement key="staticText-1" x="0" y="74" width="555" height="15" forecolor="#000000" uuid="76a03605-6145-4d91-a8b3-358a08fe068c"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_Title")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" x="0" y="89" width="555" height="15" forecolor="#000000" uuid="ee8edb8d-f73c-4a12-bf19-bc58d7d2982d"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[DATEFORMAT($P{DateAcct1}, "dd/MM/yyyy") + " - " + DATEFORMAT($P{DateAcct2}, "dd/MM/yyyy")]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="108" splitType="Stretch">
+			<textField>
+				<reportElement key="staticText-1" x="0" y="6" width="555" height="15" forecolor="#000000" uuid="3d558964-075e-4532-b1bb-e1f37c02ec0b"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_BalanceSheet")]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="0" y="36" width="277" height="48" forecolor="#000000" uuid="15652bf6-6036-4bf4-8aa0-ad021b470bd7">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<subreportParameter name="AD_Org_ID">
+					<subreportParameterExpression><![CDATA[$P{AD_Org_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DateAcct1">
+					<subreportParameterExpression><![CDATA[$P{DateAcct1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DateAcct2">
+					<subreportParameterExpression><![CDATA[$P{DateAcct2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ExcludeVoided">
+					<subreportParameterExpression><![CDATA[$P{ExcludeVoided}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AD_CLIENT_ID">
+					<subreportParameterExpression><![CDATA[$P{AD_CLIENT_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="C_AcctSchema_ID">
+					<subreportParameterExpression><![CDATA[$P{C_AcctSchema_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="StampaSottoconto">
+					<subreportParameterExpression><![CDATA[$P{StampaSottoconto}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AccountType">
+					<subreportParameterExpression><![CDATA["A"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IsOnlyActual">
+					<subreportParameterExpression><![CDATA[$P{IsOnlyActual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NotPrintClosingPosting">
+					<subreportParameterExpression><![CDATA[$P{NotPrintClosingPosting}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="saldo_gruppo" toVariable="SubAtt"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport_bis.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="278" y="36" width="277" height="48" forecolor="#000000" uuid="fdcc6d32-41b7-4576-b60e-4f03b8c193fb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<subreportParameter name="AD_Org_ID">
+					<subreportParameterExpression><![CDATA[$P{AD_Org_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DateAcct1">
+					<subreportParameterExpression><![CDATA[$P{DateAcct1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DateAcct2">
+					<subreportParameterExpression><![CDATA[$P{DateAcct2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ExcludeVoided">
+					<subreportParameterExpression><![CDATA[$P{ExcludeVoided}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AD_CLIENT_ID">
+					<subreportParameterExpression><![CDATA[$P{AD_CLIENT_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="C_AcctSchema_ID">
+					<subreportParameterExpression><![CDATA[$P{C_AcctSchema_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="StampaSottoconto">
+					<subreportParameterExpression><![CDATA[$P{StampaSottoconto}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AccountType">
+					<subreportParameterExpression><![CDATA["L"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IsOnlyActual">
+					<subreportParameterExpression><![CDATA[$P{IsOnlyActual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NotPrintClosingPosting">
+					<subreportParameterExpression><![CDATA[$P{NotPrintClosingPosting}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="saldo_gruppo" toVariable="SubPas"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport_bis.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement key="staticText-1" x="0" y="21" width="277" height="15" forecolor="#000000" uuid="844a7377-5197-4931-a4d0-fc143b1c2667"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_Activity")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" x="278" y="21" width="277" height="15" forecolor="#000000" uuid="5fcadcb2-0d42-4d90-80cb-073a92ed965c"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_Passivity")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="0" y="90" width="208" height="10" forecolor="#000000" uuid="8efeb989-7afb-4eef-8a3a-dbae88349526"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalActivity")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="278" y="90" width="208" height="10" forecolor="#000000" uuid="ffeb41af-5564-4ec8-8551-fda29a56859b"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalPassivity")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="208" y="90" width="69" height="10" uuid="8d7f3b8e-db14-4162-b85a-389ae082781f"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SubAtt}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="486" y="90" width="69" height="10" uuid="c4acdaec-99e1-4147-8aa3-6a41ae14af4a"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SubPas}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="31">
+			<break>
+				<reportElement positionType="Float" x="0" y="30" width="99" height="1" uuid="14d0b8a1-a199-40d7-8b99-ae70d4539dae"/>
+			</break>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="0" y="0" width="277" height="25" forecolor="#000000" uuid="ecba3d45-b6ae-4f65-a97b-10631ab2d17f"/>
+				<subreportParameter name="SubPer">
+					<subreportParameterExpression><![CDATA[$V{SubPas}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SubPro">
+					<subreportParameterExpression><![CDATA[$V{SubAtt}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="Sezione">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="278" y="0" width="277" height="25" forecolor="#000000" uuid="cd44c27e-2a0e-46e9-8724-0820583fffbb"/>
+				<subreportParameter name="SubPer">
+					<subreportParameterExpression><![CDATA[$V{SubPas}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SubPro">
+					<subreportParameterExpression><![CDATA[$V{SubAtt}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="Sezione">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="103">
+			<textField>
+				<reportElement key="staticText-1" positionType="Float" x="0" y="0" width="555" height="15" forecolor="#000000" uuid="b551187f-80fb-414f-9cfa-dc3e9bf0f28e"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_Account")]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="0" y="30" width="277" height="48" forecolor="#000000" uuid="45d89e76-1d4b-42dd-881f-5b8a5727016c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<subreportParameter name="DateAcct1">
+					<subreportParameterExpression><![CDATA[$P{DateAcct1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AD_Org_ID">
+					<subreportParameterExpression><![CDATA[$P{AD_Org_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DateAcct2">
+					<subreportParameterExpression><![CDATA[$P{DateAcct2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AD_CLIENT_ID">
+					<subreportParameterExpression><![CDATA[$P{AD_CLIENT_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ExcludeVoided">
+					<subreportParameterExpression><![CDATA[$P{ExcludeVoided}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="C_AcctSchema_ID">
+					<subreportParameterExpression><![CDATA[$P{C_AcctSchema_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="StampaSottoconto">
+					<subreportParameterExpression><![CDATA[$P{StampaSottoconto}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AccountType">
+					<subreportParameterExpression><![CDATA["E"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IsOnlyActual">
+					<subreportParameterExpression><![CDATA[$P{IsOnlyActual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NotPrintClosingPosting">
+					<subreportParameterExpression><![CDATA[$P{NotPrintClosingPosting}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="saldo_gruppo" toVariable="SubPer"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport_bis.jasper"]]></subreportExpression>
+			</subreport>
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="207" y="85" width="69" height="10" uuid="226716f6-d9e0-4032-abcb-84a2e2731be2"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SubPer}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##" isBlankWhenNull="true">
+				<reportElement positionType="FixRelativeToBottom" x="486" y="85" width="69" height="10" uuid="fc1e8b42-3a8e-4a64-b5a3-8237e8d03ad8"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SubPro}]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="278" y="30" width="277" height="48" forecolor="#000000" uuid="a402b2cc-f3fa-4d27-8f38-f56856160af9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<subreportParameter name="AD_Org_ID">
+					<subreportParameterExpression><![CDATA[$P{AD_Org_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DateAcct1">
+					<subreportParameterExpression><![CDATA[$P{DateAcct1}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="DateAcct2">
+					<subreportParameterExpression><![CDATA[$P{DateAcct2}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ExcludeVoided">
+					<subreportParameterExpression><![CDATA[$P{ExcludeVoided}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AD_CLIENT_ID">
+					<subreportParameterExpression><![CDATA[$P{AD_CLIENT_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="C_AcctSchema_ID">
+					<subreportParameterExpression><![CDATA[$P{C_AcctSchema_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="StampaSottoconto">
+					<subreportParameterExpression><![CDATA[$P{StampaSottoconto}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AccountType">
+					<subreportParameterExpression><![CDATA["R"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="IsOnlyActual">
+					<subreportParameterExpression><![CDATA[$P{IsOnlyActual}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="NotPrintClosingPosting">
+					<subreportParameterExpression><![CDATA[$P{NotPrintClosingPosting}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="saldo_gruppo" toVariable="SubPro"/>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport_bis.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement key="staticText-1" positionType="Float" x="0" y="15" width="277" height="15" forecolor="#000000" uuid="03d65dab-139a-4f88-9750-43897a988e27">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_Costs")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="Float" x="278" y="15" width="277" height="15" forecolor="#000000" uuid="616adbbc-d51f-499f-9a88-27423474973f">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_Revenue")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="0" y="85" width="207" height="10" forecolor="#000000" uuid="45919e99-1e42-4235-9131-e33ed27b6d3a"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalCosts")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="278" y="85" width="208" height="10" forecolor="#000000" uuid="da8da61d-aa94-4278-b530-b8fd63f18b20"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalRevenue")]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="31">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="0" y="0" width="277" height="25" forecolor="#000000" uuid="9ff85ba8-c86c-4c46-af77-78c104b9848e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<subreportParameter name="SubPer">
+					<subreportParameterExpression><![CDATA[$V{SubPer}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SubPro">
+					<subreportParameterExpression><![CDATA[$V{SubPro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="Sezione">
+					<subreportParameterExpression><![CDATA[1]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" positionType="Float" x="278" y="0" width="277" height="25" forecolor="#000000" uuid="0987e6a0-a914-4229-8778-c7d5067c116b"/>
+				<subreportParameter name="SubPer">
+					<subreportParameterExpression><![CDATA[$V{SubPer}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="SubPro">
+					<subreportParameterExpression><![CDATA[$V{SubPro}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="Sezione">
+					<subreportParameterExpression><![CDATA[2]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="92">
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField-1" x="534" y="0" width="21" height="14" forecolor="#000000" uuid="94f9bf16-a127-4226-a11b-ba469b43e631"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<image onErrorType="Blank">
+				<reportElement x="-20" y="22" width="595" height="70" uuid="83b30a6d-89ca-476d-8405-a8e320a95d2b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{lit_adorg_footer_portrait_image}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="0" y="0" width="113" height="10" uuid="8f806dcd-86b8-44e1-a518-4a0f52022c91">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="dialog" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RP.861" + " - " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>
