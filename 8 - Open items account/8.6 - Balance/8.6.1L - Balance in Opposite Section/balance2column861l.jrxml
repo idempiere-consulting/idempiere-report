@@ -246,7 +246,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				</textElement>
 				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalActivity")]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
 				<reportElement positionType="FixRelativeToBottom" x="253" y="90" width="142" height="12" uuid="c73c6fce-1159-4160-8aba-3e834581c6c8">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -279,7 +279,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				</textElement>
 				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalPassivity")]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
 				<reportElement positionType="FixRelativeToBottom" x="660" y="90" width="142" height="12" uuid="c36a2e17-2443-434f-83b5-d44c1a0e4c65">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -428,7 +428,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<returnValue subreportVariable="saldo_gruppo" toVariable="SubPer"/>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport_bis.jasper"]]></subreportExpression>
 			</subreport>
-			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
 				<reportElement positionType="FixRelativeToBottom" x="253" y="90" width="142" height="13" uuid="226716f6-d9e0-4032-abcb-84a2e2731be2"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
@@ -456,7 +456,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				</textElement>
 				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalRevenue")]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
 				<reportElement positionType="FixRelativeToBottom" x="659" y="90" width="143" height="13" uuid="fc1e8b42-3a8e-4a64-b5a3-8237e8d03ad8"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
@@ -568,7 +568,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 	<pageFooter>
 		<band height="92">
 			<textField isBlankWhenNull="false">
-				<reportElement key="textField-1" x="780" y="0" width="21" height="14" forecolor="#000000" uuid="71a20be8-51f8-4852-9a55-a1278f24a077"/>
+				<reportElement key="textField-1" x="780" y="9" width="21" height="14" forecolor="#000000" uuid="71a20be8-51f8-4852-9a55-a1278f24a077"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -587,7 +587,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<imageExpression><![CDATA[$F{lit_adorg_footer_portrait_image}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="0" y="0" width="380" height="10" uuid="7ab4e4de-ac59-46f3-8b37-1ea36732a91f">
+				<reportElement x="0" y="9" width="380" height="10" uuid="7ab4e4de-ac59-46f3-8b37-1ea36732a91f">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">

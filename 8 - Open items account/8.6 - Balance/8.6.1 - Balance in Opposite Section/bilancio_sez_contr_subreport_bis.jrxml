@@ -141,7 +141,7 @@ case
 				and fa2.dateacct <= $P{DateAcct2} ))>0 then 'A'
 		else ce.accounttype
 	end as ACCOUNTTYPE,
-	sum( case 
+	coalesce(sum( case 
 	when ce.accounttype = 'A' and ce.accountsign = 'N' and fa.dateacct <= $P{DateAcct2} and
 	(select sum(fa2.amtacctdr-fa2.amtacctcr) from fact_acct fa2 left join gl_journal gl2 on fa.record_id = gl2.gl_journal_id and fa.ad_table_id = '224'
 		 where ( case when $P{NotPrintClosingPosting} = 'Y' then gl2.isexclude = 'N' or gl2.isexclude is null else 1 = 1 end and fa2.account_id = ce.c_elementvalue_id and
@@ -155,7 +155,7 @@ case
 	  fa2.AD_ORG_ID = $P{AD_Org_ID} and fa2.dateacct <= $P{DateAcct2} ))>0 then (fa.amtacctdr-fa.amtacctcr)
  when ce.accounttype in ('L', 'O') and fa.dateacct between $P{DateAcct1} and $P{DateAcct2} then (fa.amtacctdr-fa.amtacctcr)*-1
      when ce.accounttype in ('E') and fa.dateacct between $P{DateAcct1} and $P{DateAcct2} then (fa.amtacctdr-fa.amtacctcr)     
-      when ce.accounttype in ('R') and fa.dateacct between $P{DateAcct1} and $P{DateAcct2} then (fa.amtacctdr-fa.amtacctcr)*-1 end) as SALDO
+      when ce.accounttype in ('R') and fa.dateacct between $P{DateAcct1} and $P{DateAcct2} then (fa.amtacctdr-fa.amtacctcr)*-1 end), 0) as SALDO
 FROM ad_treenode tn
 JOIN c_elementvalue ce ON ce.c_elementvalue_id = tn.node_id
 JOIN element_tree et ON tn.parent_id = et.c_elementvalue_id
@@ -270,7 +270,7 @@ ce.c_elementvalue_id, lv0_value, lv0_name, lv1_value, lv1_name, lv2_value, lv2_n
 lv3_value, lv3_name, lv4_value, lv4_name, lv5_value, lv5_name,
 lv6_value, lv6_name, ce.value, ce.name, ce.accounttype, ce.accountsign
 order by
-	ce.value]]>
+	lv0_value, lv1_value, lv2_value, lv3_value, lv4_value, lv5_value, lv6_value, ce.value]]>
 	</queryString>
 	<field name="c_elementvalue_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="c_elementvalue_id"/>
@@ -381,33 +381,25 @@ order by
 			<band height="14">
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				<printWhenExpression><![CDATA[$F{lv0_value} != null]]></printWhenExpression>
-				<textField textAdjust="ScaleFont">
-					<reportElement x="0" y="0" width="80" height="14" uuid="227a7eda-1e92-4601-b2d4-b5ac4396f0ce">
+				<textField textAdjust="StretchHeight">
+					<reportElement x="0" y="0" width="187" height="14" uuid="227a7eda-1e92-4601-b2d4-b5ac4396f0ce">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
 					<box leftPadding="2" rightPadding="2"/>
 					<textElement verticalAlignment="Middle">
-						<font isBold="true"/>
+						<font isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{lv0_value}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{lv0_value} +" " + $F{lv0_name}]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="lv0" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
-					<reportElement x="200" y="0" width="76" height="14" uuid="5df6097c-df22-4b58-b3ba-2be372289463">
+				<textField evaluationTime="Group" evaluationGroup="lv0" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="ContainerHeight" x="187" y="0" width="90" height="14" uuid="5df6097c-df22-4b58-b3ba-2be372289463">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
-					<box leftPadding="2" rightPadding="2"/>
+					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="10" isBold="true"/>
+						<font size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{saldo_lv0}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="ScaleFont">
-					<reportElement x="80" y="0" width="120" height="14" uuid="ad5818ed-914e-4ae4-97a2-c5e2a6610f59"/>
-					<box leftPadding="2" rightPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lv0_name}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -417,34 +409,26 @@ order by
 		<groupHeader>
 			<band height="12" splitType="Stretch">
 				<printWhenExpression><![CDATA[$F{lv1_value} != null]]></printWhenExpression>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv1" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
-					<reportElement x="200" y="0" width="76" height="12" uuid="4e6454da-0c85-4423-8461-049ff6d3d08e"/>
-					<box leftPadding="2" rightPadding="2"/>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv1" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="ContainerHeight" x="187" y="0" width="90" height="12" uuid="4e6454da-0c85-4423-8461-049ff6d3d08e"/>
+					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{saldo_lv1}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-					<reportElement key="textField" x="0" y="0" width="80" height="12" forecolor="#000000" uuid="9de6e136-4847-439a-bc24-fa395e55a4c8"/>
-					<box leftPadding="2" rightPadding="2">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="0" width="187" height="12" forecolor="#000000" uuid="9de6e136-4847-439a-bc24-fa395e55a4c8"/>
+					<box leftPadding="6" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{lv1_value}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="ScaleFont">
-					<reportElement x="80" y="0" width="120" height="12" uuid="9b0e835e-0feb-4ca2-8ae7-2cc02d409fee"/>
-					<box leftPadding="2" rightPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lv1_name}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{lv1_value} + " " + $F{lv1_name}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -454,34 +438,26 @@ order by
 		<groupHeader>
 			<band height="11" splitType="Stretch">
 				<printWhenExpression><![CDATA[$F{lv2_value} != null]]></printWhenExpression>
-				<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-					<reportElement key="textField" x="0" y="0" width="80" height="11" forecolor="#000000" uuid="d141525d-609b-4d09-be46-80941cd88742"/>
-					<box leftPadding="2" rightPadding="2">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="0" width="187" height="11" forecolor="#000000" uuid="d141525d-609b-4d09-be46-80941cd88742"/>
+					<box leftPadding="10" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{lv2_value}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{lv2_value} + " " + $F{lv2_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv2" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
-					<reportElement x="200" y="0" width="76" height="11" uuid="ada9be93-ed46-4eac-9099-b351e63df104"/>
-					<box leftPadding="2" rightPadding="2"/>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv2" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="ContainerHeight" x="187" y="0" width="90" height="11" uuid="ada9be93-ed46-4eac-9099-b351e63df104"/>
+					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{saldo_lv2}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="ScaleFont">
-					<reportElement x="80" y="0" width="120" height="11" uuid="13e3cb59-79da-4396-bcab-59153fcabfa8"/>
-					<box leftPadding="2" rightPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lv2_name}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -491,32 +467,24 @@ order by
 		<groupHeader>
 			<band height="11">
 				<printWhenExpression><![CDATA[$F{lv3_value} != null]]></printWhenExpression>
-				<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-					<reportElement key="textField" x="0" y="0" width="80" height="11" forecolor="#000000" uuid="5181c5a5-8394-4209-b664-e0cb436d0f25"/>
-					<box leftPadding="2" rightPadding="2">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="0" width="187" height="11" forecolor="#000000" uuid="5181c5a5-8394-4209-b664-e0cb436d0f25"/>
+					<box leftPadding="14" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{lv3_value}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{lv3_value} + " " + $F{lv3_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="ScaleFont">
-					<reportElement x="80" y="0" width="120" height="11" uuid="deca8e3c-c166-429f-9794-d849966db82f"/>
-					<box leftPadding="2" rightPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lv3_name}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv2" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
-					<reportElement x="200" y="0" width="76" height="11" uuid="923b080c-586b-4e5d-adbf-d7fbd6ac4771"/>
-					<box leftPadding="2" rightPadding="2"/>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv3" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="ContainerHeight" x="187" y="0" width="90" height="11" uuid="923b080c-586b-4e5d-adbf-d7fbd6ac4771"/>
+					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{saldo_lv3}]]></textFieldExpression>
 				</textField>
@@ -528,32 +496,24 @@ order by
 		<groupHeader>
 			<band height="11">
 				<printWhenExpression><![CDATA[$F{lv4_value} != null]]></printWhenExpression>
-				<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-					<reportElement key="textField" x="0" y="0" width="80" height="11" forecolor="#000000" uuid="dc2c208b-43b9-490b-960a-2829ad88411f"/>
-					<box leftPadding="2" rightPadding="2">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="0" width="187" height="11" forecolor="#000000" uuid="dc2c208b-43b9-490b-960a-2829ad88411f"/>
+					<box leftPadding="18" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{lv4_value}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{lv4_value} + " " + $F{lv4_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="ScaleFont">
-					<reportElement x="80" y="0" width="120" height="11" uuid="ddfb6a3e-43ea-42e4-bd80-76e431ea8f34"/>
-					<box leftPadding="2" rightPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lv4_name}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv2" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
-					<reportElement x="200" y="0" width="76" height="11" uuid="a9e9c30a-eac8-412d-88d5-07266a9fc2bb"/>
-					<box leftPadding="2" rightPadding="2"/>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv4" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="ContainerHeight" x="187" y="0" width="90" height="11" uuid="a9e9c30a-eac8-412d-88d5-07266a9fc2bb"/>
+					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{saldo_lv4}]]></textFieldExpression>
 				</textField>
@@ -565,32 +525,24 @@ order by
 		<groupHeader>
 			<band height="11">
 				<printWhenExpression><![CDATA[$F{lv5_value} != null]]></printWhenExpression>
-				<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-					<reportElement key="textField" x="0" y="0" width="80" height="11" forecolor="#000000" uuid="cf0330da-d3ca-4993-9ff2-4e86ff8cb882"/>
-					<box leftPadding="2" rightPadding="2">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="0" width="187" height="11" forecolor="#000000" uuid="cf0330da-d3ca-4993-9ff2-4e86ff8cb882"/>
+					<box leftPadding="22" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{lv5_value}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{lv5_value} + " " + $F{lv5_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="ScaleFont">
-					<reportElement x="80" y="0" width="120" height="11" uuid="c8f368e4-cfbc-4f5e-8e06-775cb36ad5cf"/>
-					<box leftPadding="2" rightPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lv5_name}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv2" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
-					<reportElement x="200" y="0" width="76" height="11" uuid="65600b5b-7441-4e13-aa73-3b3b82bde44b"/>
-					<box leftPadding="2" rightPadding="2"/>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv5" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="ContainerHeight" x="187" y="0" width="90" height="11" uuid="65600b5b-7441-4e13-aa73-3b3b82bde44b"/>
+					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{saldo_lv5}]]></textFieldExpression>
 				</textField>
@@ -602,43 +554,41 @@ order by
 		<groupHeader>
 			<band height="11">
 				<printWhenExpression><![CDATA[$F{lv6_value} != null]]></printWhenExpression>
-				<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-					<reportElement key="textField" x="0" y="0" width="80" height="11" forecolor="#000000" uuid="b48874f4-4462-47b5-a023-f02622a95815"/>
-					<box leftPadding="2" rightPadding="2">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+					<reportElement key="textField" x="0" y="0" width="187" height="11" forecolor="#000000" uuid="b48874f4-4462-47b5-a023-f02622a95815"/>
+					<box leftPadding="26" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
 					<textElement verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{lv6_value}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{lv6_value} + " " + $F{lv6_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="ScaleFont">
-					<reportElement x="80" y="0" width="120" height="11" uuid="2f57a684-9047-4220-ad68-a2959b6227b8"/>
-					<box leftPadding="2" rightPadding="2"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lv6_name}]]></textFieldExpression>
-				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv2" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
-					<reportElement x="200" y="0" width="76" height="11" uuid="74c60d43-f0a1-4415-a245-b6c5f673ac9e"/>
-					<box leftPadding="2" rightPadding="2"/>
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv6" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+					<reportElement stretchType="ContainerHeight" x="187" y="0" width="90" height="11" uuid="74c60d43-f0a1-4415-a245-b6c5f673ac9e"/>
+					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font fontName="SansSerif" size="8" isBold="true"/>
+						<font fontName="SansSerif" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{saldo_lv6}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
+		<groupFooter>
+			<band height="5">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</band>
+		</groupFooter>
 	</group>
 	<detail>
 		<band height="11" splitType="Stretch">
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-				<reportElement key="textField" x="0" y="0" width="90" height="11" forecolor="#000000" uuid="cf70cb7e-3c70-4089-b766-ac54de9f29ef"/>
-				<box leftPadding="2" rightPadding="2">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement key="textField" x="0" y="0" width="187" height="11" forecolor="#000000" uuid="cf70cb7e-3c70-4089-b766-ac54de9f29ef"/>
+				<box leftPadding="30" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -647,24 +597,11 @@ order by
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="8" isBold="false" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{value} +" " + $F{name}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
-				<reportElement key="textField" x="90" y="0" width="110" height="11" forecolor="#000000" uuid="cc072e90-87cf-4f65-b7a7-cfea02a5f93b"/>
-				<box leftPadding="2" rightPadding="2">
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="8" isBold="false" isItalic="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
-			</textField>
-			<textField textAdjust="StretchHeight" pattern="¤#,##0.##;¤-#,##0.##" isBlankWhenNull="true">
-				<reportElement key="textField" x="200" y="0" width="76" height="11" forecolor="#000000" uuid="c507771d-1d07-4b54-a450-8c08c61f45ee"/>
-				<box leftPadding="2" rightPadding="2">
+			<textField textAdjust="StretchHeight" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+				<reportElement key="textField" stretchType="ContainerHeight" x="187" y="0" width="90" height="11" forecolor="#000000" uuid="c507771d-1d07-4b54-a450-8c08c61f45ee"/>
+				<box leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
