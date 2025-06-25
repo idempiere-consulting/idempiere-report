@@ -14,11 +14,16 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="34 Sita"/>
+	<style name="bg_gray" mode="Opaque" backcolor="#D9D9D9"/>
+	<style name="easy_read">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#EEEEEE"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="RECORD_ID" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
-	<parameter name="RESOURCE" class="java.util.PropertyResourceBundle" isForPrompting="false"/>
-	<parameter name="AD_LANGUAGE" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[SELECT
      lit_c_invoice_tax."c_invoice_id" AS lit_c_invoice_tax_c_invoice_id,
@@ -47,162 +52,159 @@ WHERE
 		<variableExpression><![CDATA[$F{lit_c_invoice_tax_c_invoicetax_taxamt}]]></variableExpression>
 	</variable>
 	<columnHeader>
-		<band height="13" splitType="Stretch">
+		<band height="12" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<frame>
-				<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="260" height="13" forecolor="#999999" backcolor="#EEEEEE" uuid="fed1c296-6b81-4204-b184-d9995f9288d8">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<pen lineWidth="0.75" lineColor="#000000"/>
-					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="bg_gray" positionType="Float" x="195" y="0" width="65" height="12" uuid="7b87e026-d164-4368-baf1-04cc0ecc042c"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
 				</box>
-				<textField isBlankWhenNull="true">
-					<reportElement positionType="Float" x="195" y="0" width="59" height="12" forecolor="#333333" uuid="7b87e026-d164-4368-baf1-04cc0ecc042c"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
-						<font fontName="Dialog" size="8"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{RESOURCE}.getString("total_"+$P{AD_LANGUAGE})]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement positionType="Float" x="135" y="0" width="55" height="12" forecolor="#333333" uuid="2db0fa71-41eb-4e23-b32d-f9a67db3e170"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-						<font fontName="Dialog" size="8"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{RESOURCE}.getString("taxamt_"+$P{AD_LANGUAGE})]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement positionType="Float" mode="Transparent" x="40" y="0" width="95" height="12" forecolor="#333333" uuid="b5892766-b1ff-48ea-8baf-68c58e46e6c8"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-						<font fontName="Dialog" size="8"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{RESOURCE}.getString("taxbaseamt_"+$P{AD_LANGUAGE})]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement positionType="Float" x="6" y="0" width="34" height="12" forecolor="#333333" uuid="1575e4f8-7c0d-4a20-9893-2a259fd341e5"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
-						<font fontName="Dialog" size="8"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$P{RESOURCE}.getString("taxindicator_"+$P{AD_LANGUAGE})]]></textFieldExpression>
-				</textField>
-			</frame>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Dialog" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("Total")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="bg_gray" positionType="Float" x="135" y="0" width="60" height="12" uuid="2db0fa71-41eb-4e23-b32d-f9a67db3e170"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Dialog" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("TaxAmt")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="bg_gray" positionType="Float" x="42" y="0" width="93" height="12" uuid="b5892766-b1ff-48ea-8baf-68c58e46e6c8"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Dialog" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("TaxBaseAmt")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="bg_gray" positionType="Float" x="0" y="0" width="42" height="12" uuid="1575e4f8-7c0d-4a20-9893-2a259fd341e5"/>
+				<box leftPadding="2" rightPadding="2">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Dialog" size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("C_Tax_ID")]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="15" splitType="Stretch">
+		<band height="24" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<frame>
-				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="0" y="0" width="260" height="15" uuid="2612bbcc-37fa-46fc-ba7b-8243c9497aff">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="12" width="260" height="12" isRemoveLineWhenBlank="true" uuid="0ca61dd5-cfd6-4cd1-aa4e-52c16481e349">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
-				<box>
-					<pen lineWidth="0.75"/>
+				<box leftPadding="2" rightPadding="2">
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
 				</box>
-			</frame>
-			<frame>
-				<reportElement positionType="Float" x="0" y="0" width="260" height="15" uuid="428edad7-ade6-45ca-a243-5ad0fc09bed0">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_tax_note}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="easy_read" positionType="Float" x="195" y="0" width="65" height="12" uuid="362b3a97-3793-4dfd-8a8d-2ee9876890cf"/>
+				<box leftPadding="2" rightPadding="2">
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_invoicetax_taxbaseamt}.doubleValue()+$F{lit_c_invoice_tax_c_invoicetax_taxamt}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="easy_read" positionType="Float" x="42" y="0" width="93" height="12" uuid="d42c2a32-acaf-4138-b818-f58f7ae3f99f">
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
-				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-					<reportElement positionType="Float" isPrintRepeatedValues="false" x="0" y="12" width="210" height="2" isRemoveLineWhenBlank="true" uuid="0ca61dd5-cfd6-4cd1-aa4e-52c16481e349">
-						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
-					</reportElement>
-					<textElement>
-						<font size="8"/>
-						<paragraph leftIndent="2"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_tax_note}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="195" y="0" width="59" height="12" uuid="362b3a97-3793-4dfd-8a8d-2ee9876890cf"/>
-					<textElement textAlignment="Right">
-						<font size="8"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_invoicetax_taxbaseamt}.doubleValue()+$F{lit_c_invoice_tax_c_invoicetax_taxamt}.doubleValue()]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="40" y="0" width="95" height="12" uuid="d42c2a32-acaf-4138-b818-f58f7ae3f99f">
-						<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
-					</reportElement>
-					<textElement textAlignment="Right">
-						<font size="8"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_invoicetax_taxbaseamt}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" mode="Transparent" x="140" y="0" width="50" height="12" forecolor="#000000" backcolor="#FFFFFF" uuid="1b52c459-3f0d-4bcd-9d85-d6f1b4375e8c"/>
-					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
-						<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_invoicetax_taxamt}]]></textFieldExpression>
-				</textField>
-				<textField isBlankWhenNull="true">
-					<reportElement positionType="Float" x="4" y="0" width="38" height="12" uuid="d9e1241b-3a82-4734-9c7a-1281151d3754"/>
-					<textElement textAlignment="Center">
-						<font size="8"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_tax_taxindicator}]]></textFieldExpression>
-				</textField>
-			</frame>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_invoicetax_taxbaseamt}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="easy_read" positionType="Float" x="135" y="0" width="60" height="12" uuid="1b52c459-3f0d-4bcd-9d85-d6f1b4375e8c"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_invoicetax_taxamt}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="easy_read" positionType="Float" x="0" y="0" width="42" height="12" uuid="d9e1241b-3a82-4734-9c7a-1281151d3754"/>
+				<box leftPadding="2" rightPadding="2">
+					<leftPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lit_c_invoice_tax_c_tax_taxindicator}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>
-		<band height="13">
-			<frame>
-				<reportElement positionType="Float" mode="Transparent" x="0" y="0" width="260" height="13" forecolor="#999999" backcolor="#EEEEEE" uuid="8d88a677-3473-47ee-8c91-74c0320506b3">
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<box>
-					<pen lineWidth="0.75" lineColor="#000000"/>
-					<topPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.75" lineStyle="Solid" lineColor="#000000"/>
+		<band height="12">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="135" y="0" width="60" height="12" uuid="6520232d-5858-4eb6-bc30-8d9e1e7afd25"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="137" y="0" width="54" height="12" uuid="6520232d-5858-4eb6-bc30-8d9e1e7afd25"/>
-					<textElement textAlignment="Right">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{lit_c_invoice_tax_c_invoicetax_taxamt1}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="72" y="0" width="64" height="12" uuid="c07812ad-c0c0-47d5-b3be-d5bca265b8d9"/>
-					<textElement textAlignment="Right">
-						<font size="8" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{lit_c_invoice_tax_c_invoicetax_taxbaseamt1}]]></textFieldExpression>
-				</textField>
-				<textField pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement positionType="Float" x="195" y="0" width="59" height="12" uuid="de613327-0321-40bf-9304-d5f1340f8dea"/>
-					<textElement textAlignment="Right">
-						<font size="8" isBold="true"/>
-						<paragraph lineSpacing="Single"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$V{lit_c_invoice_tax_c_invoicetax_taxbaseamt1}.doubleValue()+$V{lit_c_invoice_tax_c_invoicetax_taxamt1}.doubleValue()]]></textFieldExpression>
-				</textField>
-			</frame>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{lit_c_invoice_tax_c_invoicetax_taxamt1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="0" width="135" height="12" uuid="c07812ad-c0c0-47d5-b3be-d5bca265b8d9"/>
+				<box leftPadding="2" rightPadding="2">
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{lit_c_invoice_tax_c_invoicetax_taxbaseamt1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="195" y="0" width="65" height="12" uuid="de613327-0321-40bf-9304-d5f1340f8dea"/>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{lit_c_invoice_tax_c_invoicetax_taxbaseamt1}.doubleValue()+$V{lit_c_invoice_tax_c_invoicetax_taxamt1}.doubleValue()]]></textFieldExpression>
+			</textField>
 		</band>
 	</columnFooter>
 </jasperReport>
