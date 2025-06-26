@@ -457,7 +457,7 @@ order by
 					</textElement>
 					<textFieldExpression><![CDATA[$F{lv0_value} +" " + $F{lv0_name}]]></textFieldExpression>
 				</textField>
-				<textField evaluationTime="Group" evaluationGroup="lv0" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+				<textField evaluationTime="Group" evaluationGroup="lv0" pattern=" #,##0.00" isBlankWhenNull="true">
 					<reportElement stretchType="ContainerHeight" x="305" y="0" width="90" height="14" uuid="5df6097c-df22-4b58-b3ba-2be372289463">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -475,7 +475,7 @@ order by
 		<groupHeader>
 			<band height="12" splitType="Stretch">
 				<printWhenExpression><![CDATA[$F{lv1_value} != null]]></printWhenExpression>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv1" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv1" pattern=" #,##0.00" isBlankWhenNull="true">
 					<reportElement stretchType="ContainerHeight" x="305" y="0" width="90" height="12" uuid="4e6454da-0c85-4423-8461-049ff6d3d08e"/>
 					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -517,7 +517,7 @@ order by
 					</textElement>
 					<textFieldExpression><![CDATA[$F{lv2_value} + " " + $F{lv2_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv2" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv2" pattern=" #,##0.00" isBlankWhenNull="true">
 					<reportElement stretchType="ContainerHeight" x="305" y="0" width="90" height="11" uuid="ada9be93-ed46-4eac-9099-b351e63df104"/>
 					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -546,7 +546,7 @@ order by
 					</textElement>
 					<textFieldExpression><![CDATA[$F{lv3_value} + " " + $F{lv3_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv3" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv3" pattern=" #,##0.00" isBlankWhenNull="true">
 					<reportElement stretchType="ContainerHeight" x="305" y="0" width="90" height="11" uuid="923b080c-586b-4e5d-adbf-d7fbd6ac4771"/>
 					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -575,7 +575,7 @@ order by
 					</textElement>
 					<textFieldExpression><![CDATA[$F{lv4_value} + " " + $F{lv4_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv4" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv4" pattern=" #,##0.00" isBlankWhenNull="true">
 					<reportElement stretchType="ContainerHeight" x="305" y="0" width="90" height="11" uuid="a9e9c30a-eac8-412d-88d5-07266a9fc2bb"/>
 					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -604,7 +604,7 @@ order by
 					</textElement>
 					<textFieldExpression><![CDATA[$F{lv5_value} + " " + $F{lv5_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv5" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv5" pattern=" #,##0.00" isBlankWhenNull="true">
 					<reportElement stretchType="ContainerHeight" x="305" y="0" width="90" height="11" uuid="65600b5b-7441-4e13-aa73-3b3b82bde44b"/>
 					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -633,7 +633,7 @@ order by
 					</textElement>
 					<textFieldExpression><![CDATA[$F{lv6_value} + " " + $F{lv6_name}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv6" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="lv6" pattern=" #,##0.00" isBlankWhenNull="true">
 					<reportElement stretchType="ContainerHeight" x="305" y="0" width="90" height="11" uuid="74c60d43-f0a1-4415-a245-b6c5f673ac9e"/>
 					<box leftPadding="2" bottomPadding="0" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -665,7 +665,7 @@ order by
 				</textElement>
 				<textFieldExpression><![CDATA[$F{value} +" " + $F{name}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" pattern="¤ #,##0.##;¤ -#,##0.##" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern=" #,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="ContainerHeight" x="305" y="0" width="90" height="11" forecolor="#000000" uuid="c507771d-1d07-4b54-a450-8c08c61f45ee"/>
 				<box leftPadding="2" bottomPadding="0" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

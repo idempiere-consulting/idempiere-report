@@ -41,11 +41,20 @@
 	<parameter name="IsOnlyActual" class="java.lang.String">
 		<defaultValueExpression><![CDATA["Y"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="LOCALE_CODE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_LOCALE}.toString()]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select 
- 	 lit_adorg_header_portrait_image($P{AD_Org_ID} ),
-	 lit_adorg_footer_portrait_image($P{AD_Org_ID} )
-from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
+ 	 lit_adorg_header_portrait_image($P{AD_CLIENT_ID}, $P{AD_Org_ID} ),
+	 lit_adorg_footer_portrait_image($P{AD_CLIENT_ID}, $P{AD_Org_ID} ),
+	 lit_date_pattern($P{LOCALE_CODE}) AS datepattern,
+	 lit_datetime_pattern($P{LOCALE_CODE}) AS datetimepattern,
+	 c_currency.iso_code
+from c_acctschema 
+inner join c_currency on c_acctschema.c_currency_id = c_currency.c_currency_id
+where c_acctschema.ad_client_id = $P{AD_CLIENT_ID}
+and c_acctschema.ad_org_id in (0,$P{AD_Org_ID})]]>
 	</queryString>
 	<field name="lit_adorg_header_portrait_image" class="byte[]">
 		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_header_portrait_image"/>
@@ -54,6 +63,19 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 	<field name="lit_adorg_footer_portrait_image" class="byte[]">
 		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_footer_portrait_image"/>
 		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_footer_portrait_image"/>
+	</field>
+	<field name="datepattern" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="datepattern"/>
+		<property name="com.jaspersoft.studio.field.label" value="datepattern"/>
+	</field>
+	<field name="datetimepattern" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="datetimepattern"/>
+		<property name="com.jaspersoft.studio.field.label" value="datetimepattern"/>
+	</field>
+	<field name="iso_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="iso_code"/>
+		<property name="com.jaspersoft.studio.field.label" value="iso_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_currency"/>
 	</field>
 	<variable name="SubAtt" class="java.math.BigDecimal"/>
 	<variable name="SubPas" class="java.math.BigDecimal"/>
@@ -64,7 +86,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 	<pageHeader>
 		<band height="104" splitType="Stretch">
 			<image onErrorType="Blank">
-				<reportElement x="-20" y="0" width="595" height="70" uuid="81a548b6-080f-407b-bee4-bf05faa11c91">
+				<reportElement x="-20" y="0" width="595" height="70" isRemoveLineWhenBlank="true" uuid="81a548b6-080f-407b-bee4-bf05faa11c91">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				</reportElement>
@@ -81,7 +103,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_Title")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_Title")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement key="staticText-1" x="0" y="89" width="555" height="15" forecolor="#000000" uuid="ee8edb8d-f73c-4a12-bf19-bc58d7d2982d"/>
@@ -94,7 +116,9 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[DATEFORMAT($P{DateAcct1}, "dd/MM/yyyy") + " - " + DATEFORMAT($P{DateAcct2}, "dd/MM/yyyy")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new SimpleDateFormat($F{datepattern}, $P{REPORT_LOCALE}).format($P{DateAcct1})
++ " - " +
+new SimpleDateFormat($F{datepattern}, $P{REPORT_LOCALE}).format($P{DateAcct2})]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -111,7 +135,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_BalanceSheet")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_BalanceSheet")]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" x="0" y="36" width="277" height="48" forecolor="#000000" uuid="15652bf6-6036-4bf4-8aa0-ad021b470bd7">
@@ -206,7 +230,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_Activity")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_Activity")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement key="staticText-1" x="278" y="21" width="277" height="15" forecolor="#000000" uuid="5fcadcb2-0d42-4d90-80cb-073a92ed965c"/>
@@ -219,10 +243,10 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_Passivity")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_Passivity")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="0" y="90" width="208" height="10" forecolor="#000000" uuid="8efeb989-7afb-4eef-8a3a-dbae88349526"/>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="0" y="90" width="170" height="10" forecolor="#000000" uuid="8efeb989-7afb-4eef-8a3a-dbae88349526"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
@@ -233,10 +257,10 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalActivity")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_TotalActivity")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="278" y="90" width="208" height="10" forecolor="#000000" uuid="ffeb41af-5564-4ec8-8551-fda29a56859b"/>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="278" y="90" width="170" height="10" forecolor="#000000" uuid="ffeb41af-5564-4ec8-8551-fda29a56859b"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
@@ -247,9 +271,9 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalPassivity")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_TotalPassivity")]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement positionType="FixRelativeToBottom" x="208" y="90" width="69" height="10" uuid="8d7f3b8e-db14-4162-b85a-389ae082781f"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
@@ -263,7 +287,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{SubAtt}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement positionType="FixRelativeToBottom" x="486" y="90" width="69" height="10" uuid="c4acdaec-99e1-4147-8aa3-6a41ae14af4a"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
@@ -276,6 +300,34 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{SubPas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="170" y="90" width="38" height="10" forecolor="#000000" uuid="4f03fbd0-6345-4054-b43a-6089638ff3ec"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="448" y="90" width="38" height="10" forecolor="#000000" uuid="50e66193-7fc8-44dd-b965-9af15d148144"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="31">
@@ -296,6 +348,9 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="iso_code">
+					<subreportParameterExpression><![CDATA[$F{iso_code}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport2.jasper"]]></subreportExpression>
 			</subreport>
@@ -313,6 +368,9 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="iso_code">
+					<subreportParameterExpression><![CDATA[$F{iso_code}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport2.jasper"]]></subreportExpression>
 			</subreport>
@@ -329,7 +387,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_Account")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_Account")]]></textFieldExpression>
 			</textField>
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" positionType="Float" x="0" y="30" width="277" height="48" forecolor="#000000" uuid="45d89e76-1d4b-42dd-881f-5b8a5727016c">
@@ -372,7 +430,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<returnValue subreportVariable="saldo_gruppo" toVariable="SubPer"/>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport_bis.jasper"]]></subreportExpression>
 			</subreport>
-			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement positionType="FixRelativeToBottom" x="207" y="85" width="69" height="10" uuid="226716f6-d9e0-4032-abcb-84a2e2731be2"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
@@ -386,7 +444,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{SubPer}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="¤#,##0.##" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement positionType="FixRelativeToBottom" x="486" y="85" width="69" height="10" uuid="fc1e8b42-3a8e-4a64-b5a3-8237e8d03ad8"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
@@ -454,7 +512,7 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_Costs")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_Costs")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement key="staticText-1" positionType="Float" x="278" y="15" width="277" height="15" forecolor="#000000" uuid="616adbbc-d51f-499f-9a88-27423474973f">
@@ -469,10 +527,10 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_Revenue")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_Revenue")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="0" y="85" width="207" height="10" forecolor="#000000" uuid="45919e99-1e42-4235-9131-e33ed27b6d3a"/>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="0" y="85" width="169" height="10" forecolor="#000000" uuid="45919e99-1e42-4235-9131-e33ed27b6d3a"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
@@ -483,10 +541,10 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalCosts")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_TotalCosts")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="278" y="85" width="208" height="10" forecolor="#000000" uuid="da8da61d-aa94-4278-b530-b8fd63f18b20"/>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="278" y="85" width="170" height="10" forecolor="#000000" uuid="da8da61d-aa94-4278-b530-b8fd63f18b20"/>
 				<box leftPadding="2" rightPadding="2">
 					<pen lineWidth="1.0"/>
 					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
@@ -497,7 +555,35 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_TotalRevenue")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_TotalRevenue")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="169" y="85" width="38" height="10" forecolor="#000000" uuid="8b110cc1-93df-4e6a-b445-560f93214977"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="FixRelativeToBottom" x="448" y="85" width="38" height="10" forecolor="#000000" uuid="7f508093-a571-4cd3-9cf6-7049d22f4de2"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0" lineStyle="Dotted" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="31">
@@ -517,6 +603,9 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="iso_code">
+					<subreportParameterExpression><![CDATA[$F{iso_code}]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport2.jasper"]]></subreportExpression>
 			</subreport>
@@ -533,6 +622,9 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				</subreportParameter>
 				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="iso_code">
+					<subreportParameterExpression><![CDATA[$F{iso_code}]]></subreportParameterExpression>
 				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "bilancio_sez_contr_subreport2.jasper"]]></subreportExpression>
@@ -555,19 +647,19 @@ from ad_client where ad_client_id = $P{AD_CLIENT_ID}]]>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<image onErrorType="Blank">
-				<reportElement x="-20" y="22" width="595" height="70" uuid="83b30a6d-89ca-476d-8405-a8e320a95d2b">
+				<reportElement x="-20" y="22" width="595" height="70" isRemoveLineWhenBlank="true" uuid="83b30a6d-89ca-476d-8405-a8e320a95d2b">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<imageExpression><![CDATA[$F{lit_adorg_footer_portrait_image}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="0" y="0" width="113" height="10" uuid="8f806dcd-86b8-44e1-a518-4a0f52022c91">
+				<reportElement x="0" y="0" width="290" height="10" uuid="8f806dcd-86b8-44e1-a518-4a0f52022c91">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font fontName="dialog" size="7" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["RP.861" + " - " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["RP.861" + " - " + new SimpleDateFormat($F{datetimepattern}, $P{REPORT_LOCALE}).format(new Date())]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

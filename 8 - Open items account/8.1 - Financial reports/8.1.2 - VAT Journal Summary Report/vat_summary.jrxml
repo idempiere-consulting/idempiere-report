@@ -19,13 +19,14 @@
 	<parameter name="AD_ROLE_ID" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="AD_CLIENT_ID" class="java.lang.Integer"/>
 	<parameter name="RESOURCE" class="java.util.PropertyResourceBundle" isForPrompting="false"/>
-	<parameter name="AD_ORG_ID" class="java.lang.Integer"/>
+	<parameter name="AD_Org_ID" class="java.lang.Integer"/>
 	<parameter name="LIT_VAT_PERIOD_ID" class="java.lang.Integer"/>
 	<parameter name="LIT_IsExcludeLIPE" class="java.lang.String"/>
 	<parameter name="LIT_IsDetail" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LIT_AccountSign" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="LOCALE_CODE" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
      vat."ad_client_id" AS vat_ad_client_id,
@@ -47,11 +48,218 @@
      vat."c_tax_id" AS vat_c_tax_id,
      vat."lit_vatjournal_id" AS vat_lit_vatjournal_id,
      vat."value" AS vat_vatjournalvalue,
-          vat.documenttype
-FROM
-     "adempiere"."lit_vat_journal_v" vat
+          vat.documenttype,
+          vat.iso_code
+FROM(
+ select
+ (select iso_code
+from c_currency
+inner join c_acctschema on c_acctschema.c_currency_id = c_currency.c_currency_id
+where c_acctschema.ad_client_id in (0, $P{AD_CLIENT_ID})
+and c_acctschema.ad_org_id in (0, $P{AD_Org_ID})) as iso_code,
+ c_invoice.ad_client_id,
+    c_invoice.ad_org_id,
+    c_invoice.c_invoice_id,
+    c_invoice.documentno,
+        CASE
+            WHEN c_invoice.a_effective_date IS NOT NULL AND lvj2.accountsign = 'D'::bpchar THEN c_invoice.a_effective_date
+            ELSE c_invoice.dateinvoiced
+        END AS dateinvoiced,
+    c_invoice.dateacct,
+        CASE
+            WHEN lvj2.lit_iscreatenegativemovement = 'Y'::bpchar THEN c_invoice.lit_vatnumber1
+            ELSE c_invoice.vatdocumentno
+        END AS vatdocumentno,
+    c_invoice.lit_vatnumber1,
+    date_part('year'::text, f.startdate) AS year,
+    f.c_period_id,
+    f.lit_vat_period_id,
+    f.startdate::date AS vatperioddate,
+        CASE
+            WHEN c_invoice.c_currency_id <> COALESCE(accs.c_currency_id, 102::numeric) THEN ( SELECT currencyconvertinvoice(c_invoice.c_invoice_id, COALESCE(accs.c_currency_id, 102::numeric), c_invoice.grandtotal, (( SELECT
+                            CASE
+                                WHEN ((( SELECT ad_sysconfig.value
+                                   FROM ad_sysconfig
+                                  WHERE ad_sysconfig.name::text = 'LIT_CURRENCYONDATEDOC'::text
+                                  ORDER BY ad_sysconfig.ad_client_id DESC
+                                 LIMIT 1))::text) = 'Y'::text THEN c_invoice.dateinvoiced
+                                ELSE c_invoice.dateacct
+                            END AS dateacct))::timestamp with time zone) AS currencyconvertinvoice)
+            WHEN c_tax.lit_vatjournal_id IS NOT NULL THEN (c_invoice.grandtotal - (( SELECT sum(it.taxamt) AS sum
+               FROM c_invoicetax it
+                 JOIN c_tax c_tax_1 ON it.c_tax_id = c_tax_1.c_tax_id
+              WHERE it.c_invoice_id = c_invoice.c_invoice_id AND c_tax_1.requirestaxcertificate = 'N'::bpchar AND (it.taxbaseamt < 0::numeric AND it.taxamt > 0::numeric OR it.taxbaseamt > 0::numeric AND it.taxamt < 0::numeric)))) *
+            CASE
+                WHEN c_doctype.docbasetype = 'ARC'::bpchar AND lit_vatjournal.accountsign = 'D'::bpchar OR c_doctype.docbasetype = 'APC'::bpchar AND lit_vatjournal.accountsign = 'C'::bpchar THEN '-1'::integer::numeric
+                ELSE 1::numeric
+            END
+            WHEN c_invoice.withholdingamt > 0::numeric THEN c_invoice.totallines + (( SELECT sum(it.taxamt) AS sum
+               FROM c_invoicetax it
+                 JOIN c_tax c_tax_1 ON it.c_tax_id = c_tax_1.c_tax_id
+              WHERE it.c_invoice_id = c_invoice.c_invoice_id AND c_tax_1.requirestaxcertificate = 'N'::bpchar))
+            WHEN c_doctype.docbasetype = 'ARC'::bpchar AND lit_vatjournal.accountsign = 'D'::bpchar OR c_doctype.docbasetype = 'APC'::bpchar AND lit_vatjournal.accountsign = 'C'::bpchar THEN c_invoice.grandtotal * '-1'::integer::numeric
+            ELSE c_invoice.grandtotal
+        END AS grandtotal,
+        CASE
+            WHEN c_tax.lit_vatjournal_id IS NOT NULL AND c_doctype.lit_isnotposting <> 'Y'::bpchar THEN c_tax.lit_vatjournal_id
+            ELSE lit_vatjournal.lit_vatjournal_id
+        END AS lit_vatjournal_id,
+    lit_vatjournal.value,
+        CASE
+            WHEN c_tax.lit_vatjournal_id IS NOT NULL THEN lvj2.name
+            ELSE lit_vatjournal.name
+        END AS lit_vatjournal_name,
+        CASE
+            WHEN c_tax.lit_vatjournal_id IS NOT NULL THEN lvj2.accountsign
+            ELSE lit_vatjournal.accountsign
+        END AS lit_vatjournal_accountsign,
+    lit_vatjournal.lit_isvatdebitcorr,
+    c_tax.c_tax_id,
+    c_tax.value AS c_tax_value,
+    c_tax.taxindicator,
+    c_tax.name AS c_tax_name,
+    c_tax.issalestax AS c_tax_issalestax,
+    c_tax.description AS c_tax_description,
+    c_tax.lit_isexcludelipe AS c_tax_isexcludedlipe,
+    c_tax.lit_excludelipe AS c_tax_excludedlipe,
+        CASE
+            WHEN c_tax.lit_excludelipe::text = 'EA'::text THEN 0::numeric
+            WHEN (c_doctype.docbasetype = ANY (ARRAY['ARC'::bpchar, 'APC'::bpchar])) AND c_invoicetax.taxamt < 0::numeric AND c_tax.lit_vatjournal_id IS NULL THEN 0::numeric
+            WHEN c_invoice.c_currency_id <> COALESCE(accs.c_currency_id, 102::numeric) AND (c_doctype.docbasetype = ANY (ARRAY['ARC'::bpchar, 'APC'::bpchar])) THEN round((( SELECT currencyconvertinvoice(c_invoice.c_invoice_id, COALESCE(accs.c_currency_id, 102::numeric), c_invoicetax.taxbaseamt, (( SELECT
+                            CASE
+                                WHEN ((( SELECT ad_sysconfig.value
+                                   FROM ad_sysconfig
+                                  WHERE ad_sysconfig.name::text = 'LIT_CURRENCYONDATEDOC'::text
+                                  ORDER BY ad_sysconfig.ad_client_id DESC
+                                 LIMIT 1))::text) = 'Y'::text THEN c_invoice.dateinvoiced
+                                ELSE c_invoice.dateacct
+                            END AS dateacct))::timestamp with time zone) AS currencyconvertinvoice)) * c_tax.percent / 100::numeric * '-1'::integer::numeric, 2)
+            WHEN c_invoice.c_currency_id = COALESCE(accs.c_currency_id, 102::numeric) AND (c_doctype.docbasetype = ANY (ARRAY['ARC'::bpchar, 'APC'::bpchar])) THEN round(c_invoicetax.taxbaseamt * c_tax.percent / 100::numeric * '-1'::integer::numeric, 2)
+            WHEN c_invoicetax.taxamt < 0::numeric AND c_tax.lit_vatjournal_id IS NULL THEN 0::numeric
+            WHEN c_invoice.c_currency_id <> COALESCE(accs.c_currency_id, 102::numeric) THEN round((( SELECT currencyconvertinvoice(c_invoice.c_invoice_id, COALESCE(accs.c_currency_id, 102::numeric), c_invoicetax.taxbaseamt, (( SELECT
+                            CASE
+                                WHEN ((( SELECT ad_sysconfig.value
+                                   FROM ad_sysconfig
+                                  WHERE ad_sysconfig.name::text = 'LIT_CURRENCYONDATEDOC'::text
+                                  ORDER BY ad_sysconfig.ad_client_id DESC
+                                 LIMIT 1))::text) = 'Y'::text THEN c_invoice.dateinvoiced
+                                ELSE c_invoice.dateacct
+                            END AS dateacct))::timestamp with time zone) AS currencyconvertinvoice)) * c_tax.percent / 100::numeric, 2)
+            WHEN c_tax.issalestax = 'Y'::bpchar THEN 0::numeric
+            WHEN c_tax.lit_excludelipe::text <> 'N'::text THEN round(c_invoicetax.taxbaseamt * c_tax.percent / 100::numeric * 1::numeric, 2)
+            ELSE round(c_invoicetax.taxbaseamt * c_tax.percent / 100::numeric, 2)
+        END AS taxbaseamtfull,
+        CASE
+            WHEN c_tax.lit_excludelipe::text = 'SB'::text OR c_tax.lit_excludelipe::text = 'EX'::text OR c_tax.lit_excludelipe::text = 'EA'::text THEN 0::numeric
+            WHEN c_invoice.c_currency_id <> COALESCE(accs.c_currency_id, 102::numeric) AND (c_doctype.docbasetype = ANY (ARRAY['ARC'::bpchar, 'APC'::bpchar])) THEN round((( SELECT currencyconvertinvoice(c_invoice.c_invoice_id, COALESCE(accs.c_currency_id, 102::numeric), c_invoicetax.taxbaseamt, (( SELECT
+                            CASE
+                                WHEN ((( SELECT ad_sysconfig.value
+                                   FROM ad_sysconfig
+                                  WHERE ad_sysconfig.name::text = 'LIT_CURRENCYONDATEDOC'::text
+                                  ORDER BY ad_sysconfig.ad_client_id DESC
+                                 LIMIT 1))::text) = 'Y'::text THEN c_invoice.dateinvoiced
+                                ELSE c_invoice.dateacct
+                            END AS dateacct))::timestamp with time zone) AS currencyconvertinvoice)) * c_tax.percent / 100::numeric * '-1'::integer::numeric, 2)
+            WHEN c_invoice.c_currency_id = COALESCE(accs.c_currency_id, 102::numeric) AND (c_doctype.docbasetype = ANY (ARRAY['ARC'::bpchar, 'APC'::bpchar])) THEN round(c_invoicetax.taxbaseamt * c_tax.percent / 100::numeric * '-1'::integer::numeric, 2)
+            WHEN c_invoicetax.taxamt < 0::numeric AND c_tax.lit_vatjournal_id IS NULL THEN 0::numeric
+            WHEN c_invoice.c_currency_id <> COALESCE(accs.c_currency_id, 102::numeric) THEN ( SELECT currencyconvertinvoice(c_invoice.c_invoice_id, COALESCE(accs.c_currency_id, 102::numeric), c_invoicetax.taxbaseamt * c_tax.percent / 100::numeric, (( SELECT
+                            CASE
+                                WHEN ((( SELECT ad_sysconfig.value
+                                   FROM ad_sysconfig
+                                  WHERE ad_sysconfig.name::text = 'LIT_CURRENCYONDATEDOC'::text
+                                  ORDER BY ad_sysconfig.ad_client_id DESC
+                                 LIMIT 1))::text) = 'Y'::text THEN c_invoice.dateinvoiced
+                                ELSE c_invoice.dateacct
+                            END AS dateacct))::timestamp with time zone) AS currencyconvertinvoice)
+            WHEN c_tax.issalestax = 'Y'::bpchar THEN 0::numeric
+            WHEN c_tax.lit_excludelipe::text <> 'N'::text THEN round(c_invoicetax.taxbaseamt * c_tax.percent / 100::numeric * '-1'::integer::numeric, 2)
+            ELSE round(c_invoicetax.taxbaseamt * c_tax.percent / 100::numeric, 2)
+        END AS taxbaseamt,
+        CASE
+            WHEN c_tax.lit_excludelipe::text = 'EX'::text THEN 0::numeric
+            WHEN c_tax.lit_excludelipe::text = 'SB'::text AND c_doctype.docbasetype = 'API'::bpchar THEN c_invoicetax.taxamt * '-1'::integer::numeric
+            WHEN c_tax.lit_excludelipe::text = 'SB'::text AND c_doctype.docbasetype = 'APC'::bpchar THEN c_invoicetax.taxamt
+            WHEN c_tax.issalestax = 'Y'::bpchar THEN c_invoicetax.taxamt * 0::numeric
+            WHEN c_invoice.c_currency_id <> COALESCE(accs.c_currency_id, 102::numeric) AND (c_doctype.docbasetype = ANY (ARRAY['ARC'::bpchar, 'APC'::bpchar])) THEN (( SELECT currencyconvertinvoice(c_invoice.c_invoice_id, COALESCE(accs.c_currency_id, 102::numeric), c_invoicetax.taxamt, (( SELECT
+                            CASE
+                                WHEN ((( SELECT ad_sysconfig.value
+                                   FROM ad_sysconfig
+                                  WHERE ad_sysconfig.name::text = 'LIT_CURRENCYONDATEDOC'::text
+                                  ORDER BY ad_sysconfig.ad_client_id DESC
+                                 LIMIT 1))::text) = 'Y'::text THEN c_invoice.dateinvoiced
+                                ELSE c_invoice.dateacct
+                            END AS dateacct))::timestamp with time zone) AS currencyconvertinvoice)) * '-1'::integer::numeric
+            WHEN c_invoice.c_currency_id = COALESCE(accs.c_currency_id, 102::numeric) AND (c_doctype.docbasetype = ANY (ARRAY['ARC'::bpchar, 'APC'::bpchar])) THEN c_invoicetax.taxamt * '-1'::integer::numeric
+            WHEN c_tax.issalestax = 'Y'::bpchar THEN c_invoicetax.taxamt * 0::numeric
+            WHEN c_invoice.c_currency_id <> COALESCE(accs.c_currency_id, 102::numeric) THEN ( SELECT currencyconvertinvoice(c_invoice.c_invoice_id, COALESCE(accs.c_currency_id, 102::numeric), c_invoicetax.taxamt, (( SELECT
+                            CASE
+                                WHEN ((( SELECT ad_sysconfig.value
+                                   FROM ad_sysconfig
+                                  WHERE ad_sysconfig.name::text = 'LIT_CURRENCYONDATEDOC'::text
+                                  ORDER BY ad_sysconfig.ad_client_id DESC
+                                 LIMIT 1))::text) = 'Y'::text THEN c_invoice.dateinvoiced
+                                ELSE c_invoice.dateacct
+                            END AS dateacct))::timestamp with time zone) AS currencyconvertinvoice)
+            WHEN c_tax.lit_excludelipe::text <> 'N'::text AND c_tax.lit_vatjournal_id IS NOT NULL AND lvj2.lit_iscreatenegativemovement = 'Y'::bpchar THEN c_invoicetax.taxamt * '-1'::integer::numeric
+            ELSE c_invoicetax.taxamt
+        END AS taxamt,
+        CASE
+            WHEN c_tax.issalestax = 'Y'::bpchar THEN
+            CASE
+                WHEN c_invoice.c_currency_id = COALESCE(accs.c_currency_id, 102::numeric) AND (c_doctype.docbasetype = ANY (ARRAY['ARC'::bpchar, 'APC'::bpchar])) THEN c_invoicetax.taxamt * '-1'::integer::numeric
+                ELSE c_invoicetax.taxamt
+            END
+            ELSE 0::numeric
+        END AS notaxamt,
+    c_bpartner.name AS c_bpartner_name,
+    c_bpartner.name2 AS c_bpartner_name2,
+    c_bpartner.taxid,
+    c_doctype.docbasetype,
+    f.name AS vat_period_name,
+        CASE
+            WHEN c_tax.issalestax = 'Y'::bpchar THEN
+            CASE
+                WHEN c_invoice.c_currency_id = COALESCE(accs.c_currency_id, 102::numeric) AND (c_doctype.docbasetype = ANY (ARRAY['ARC'::bpchar, 'APC'::bpchar])) THEN c_invoicetax.taxbaseamt * c_tax.percent / 100::numeric * '-1'::integer::numeric
+                ELSE c_invoicetax.taxbaseamt * c_tax.percent / 100::numeric
+            END
+            ELSE 0::numeric
+        END AS taxbaseamtnotax,
+    c_doctype_trl.name AS documenttype,
+    c_invoice.a_effective_date,
+    lit_vatjournal.accountsign,
+    lvj2.lit_iscreatenegativemovement,
+    lv.lit_yearvatbaseso,
+    lv.lit_yearvatamtso,
+    lv.lit_yearvatbasetotso,
+    lv.lit_yearvatbasepo,
+    lv.lit_yearvatamtpo,
+    lv.lit_yearvatbaseso1,
+    lv.lit_yearvatamtso1,
+    lv.lit_yearvatbasepo1,
+    lv.lit_yearvatamtpo1,
+    lv.lit_yearvatbasepo2,
+    lv.lit_yearvatamtpo2,
+    lv.name AS vatcodename,
+    f.c_year_id,
+    c_tax.rate AS c_tax_rate,
+    f.startdate AS period_startdate,
+    f.startdate AS vat_period_datefrom,
+    f.enddate AS vat_period_dateto
+   FROM c_tax c_tax
+     LEFT JOIN c_invoicetax c_invoicetax ON c_tax.c_tax_id = c_invoicetax.c_tax_id
+     LEFT JOIN c_invoice c_invoice ON c_invoice.c_invoice_id = c_invoicetax.c_invoice_id
+     LEFT JOIN lit_vatjournal ON c_invoice.lit_vatjournal_id = lit_vatjournal.lit_vatjournal_id
+     LEFT JOIN lit_vatjournal lvj2 ON c_tax.lit_vatjournal_id = lvj2.lit_vatjournal_id
+     LEFT JOIN c_bpartner ON c_invoice.c_bpartner_id = c_bpartner.c_bpartner_id
+     LEFT JOIN c_doctype ON c_invoice.c_doctypetarget_id = c_doctype.c_doctype_id
+     LEFT JOIN c_doctype_trl ON c_doctype.c_doctype_id = c_doctype_trl.c_doctype_id AND c_doctype_trl.ad_language::text = $P{LOCALE_CODE}::text
+     LEFT JOIN lit_vat_period f ON c_invoice.lit_vat_period_id = f.lit_vat_period_id
+     LEFT JOIN c_acctschema accs ON accs.ad_orgonly_id = c_invoice.ad_org_id
+     LEFT JOIN lit_vat lv ON c_tax.lit_vat_id = lv.lit_vat_id
+  WHERE c_invoice.posted = 'Y'::bpchar AND c_tax.requirestaxcertificate <> 'Y'::bpchar AND c_doctype.lit_isnotposting <> 'Y'::bpchar
+) vat
 WHERE
-vat."ad_org_id" = $P{AD_ORG_ID} AND
+vat."ad_org_id" = $P{AD_Org_ID} AND
 vat."lit_vat_period_id" = $P{LIT_VAT_PERIOD_ID} AND
 vat."lit_vatjournal_accountsign"=$P{LIT_AccountSign}
 order by   vat.lit_vatjournal_id ,  vat.c_tax_id,
@@ -60,27 +268,27 @@ dateacct,vatdocumentno]]>
 	<field name="vat_ad_client_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="vat_ad_client_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_ad_client_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
 	</field>
 	<field name="vat_ad_org_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="vat_ad_org_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_ad_org_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
 	</field>
 	<field name="vat_c_invoice_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="vat_c_invoice_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_c_invoice_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
 	</field>
 	<field name="vat_documentno" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="vat_documentno"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_documentno"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
 	</field>
 	<field name="vat_dateacct" class="java.sql.Timestamp">
 		<property name="com.jaspersoft.studio.field.name" value="vat_dateacct"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_dateacct"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_invoice"/>
 	</field>
 	<field name="vat_vatdocumentno" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="vat_vatdocumentno"/>
@@ -100,17 +308,17 @@ dateacct,vatdocumentno]]>
 	<field name="vat_c_tax_taxindicator" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="vat_c_tax_taxindicator"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_c_tax_taxindicator"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_tax"/>
 	</field>
 	<field name="vat_c_tax_name" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="vat_c_tax_name"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_c_tax_name"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_tax"/>
 	</field>
 	<field name="vat_c_tax_description" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="vat_c_tax_description"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_c_tax_description"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_tax"/>
 	</field>
 	<field name="vat_c_invoicetax_taxbaseamtfull" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="vat_c_invoicetax_taxbaseamtfull"/>
@@ -130,17 +338,17 @@ dateacct,vatdocumentno]]>
 	<field name="vat_c_bpartner_name" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="vat_c_bpartner_name"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_c_bpartner_name"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
 	</field>
 	<field name="vatnumber" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="vatnumber"/>
 		<property name="com.jaspersoft.studio.field.label" value="vatnumber"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
 	</field>
 	<field name="vat_c_tax_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="vat_c_tax_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_c_tax_id"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_tax"/>
 	</field>
 	<field name="vat_lit_vatjournal_id" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="vat_lit_vatjournal_id"/>
@@ -150,12 +358,16 @@ dateacct,vatdocumentno]]>
 	<field name="vat_vatjournalvalue" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="vat_vatjournalvalue"/>
 		<property name="com.jaspersoft.studio.field.label" value="vat_vatjournalvalue"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vatjournal"/>
 	</field>
 	<field name="documenttype" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="documenttype"/>
 		<property name="com.jaspersoft.studio.field.label" value="documenttype"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="lit_vat_journal_v"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_doctype_trl"/>
+	</field>
+	<field name="iso_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="iso_code"/>
+		<property name="com.jaspersoft.studio.field.label" value="iso_code"/>
 	</field>
 	<variable name="vat_c_invoicetax_taxbaseamt1" class="java.math.BigDecimal" resetType="Group" resetGroup="ctax" calculation="Sum">
 		<variableExpression><![CDATA[$F{vat_c_invoicetax_taxbaseamt}]]></variableExpression>
@@ -188,8 +400,8 @@ dateacct,vatdocumentno]]>
 		<groupExpression><![CDATA[$F{vat_lit_vatjournal_id}]]></groupExpression>
 		<groupFooter>
 			<band height="13">
-				<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤">
-					<reportElement x="332" y="0" width="223" height="13" uuid="978f0658-c660-434a-b39c-c7abd6a1eab4"/>
+				<textField textAdjust="StretchHeight" pattern="#,##0.00">
+					<reportElement x="390" y="0" width="165" height="13" uuid="978f0658-c660-434a-b39c-c7abd6a1eab4"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
@@ -201,8 +413,8 @@ dateacct,vatdocumentno]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{vat_c_invoicetax_taxamt2}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤">
-					<reportElement x="236" y="0" width="96" height="13" uuid="fd8694d8-573b-4d93-9037-7a9e05f31fd6"/>
+				<textField textAdjust="StretchHeight" pattern="#,##0.00">
+					<reportElement x="294" y="0" width="96" height="13" uuid="fd8694d8-573b-4d93-9037-7a9e05f31fd6"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineStyle="Solid" lineColor="#000000"/>
@@ -228,6 +440,19 @@ dateacct,vatdocumentno]]>
 						<font size="9" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{lit_vatjournal_name}]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement x="236" y="0" width="58" height="13" uuid="8fe5264c-cbb1-4cb9-adfd-46b848c3a105"/>
+					<box leftPadding="2" rightPadding="2">
+						<topPen lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+						<rightPen lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -271,31 +496,41 @@ dateacct,vatdocumentno]]>
 					<textFieldExpression><![CDATA[str("DocumentType")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="236" y="0" width="96" height="13" uuid="0713d8c2-1834-47fa-b418-6a00d3b6204e">
+					<reportElement x="294" y="0" width="96" height="13" uuid="0713d8c2-1834-47fa-b418-6a00d3b6204e">
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
 					</reportElement>
 					<box leftPadding="2" rightPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[str("LIT_RP_812_VAT_Vatable")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[str("LIT_REP_812_VAT_Vatable")]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="332" y="0" width="223" height="13" uuid="4a53c11e-3870-4e2a-a1ca-62cb2f87f97e"/>
+					<reportElement x="390" y="0" width="165" height="13" uuid="4a53c11e-3870-4e2a-a1ca-62cb2f87f97e"/>
 					<box leftPadding="2" rightPadding="2">
 						<rightPen lineWidth="1.0"/>
 					</box>
 					<textElement textAlignment="Right">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[str("LIT_RP_812_Debit")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[str("LIT_REP_812_Debit")]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="ScaleFont">
+					<reportElement x="236" y="0" width="58" height="13" uuid="0cada874-24cd-4e2c-bc99-cf0b95be222e">
+						<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					</reportElement>
+					<box leftPadding="2" rightPadding="2"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[str("C_Currency_ID")]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
 		<groupFooter>
 			<band height="13">
-				<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤">
-					<reportElement x="236" y="0" width="96" height="13" uuid="adb575be-1de3-4efa-b81b-7703dae25e44"/>
+				<textField textAdjust="StretchHeight" pattern="#,##0.00">
+					<reportElement x="294" y="0" width="96" height="13" uuid="adb575be-1de3-4efa-b81b-7703dae25e44"/>
 					<box leftPadding="2" rightPadding="2">
 						<bottomPen lineWidth="1.0"/>
 					</box>
@@ -304,8 +539,8 @@ dateacct,vatdocumentno]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{LIT_IsExcludeLIPE}.equals("Y")?$V{vat_c_invoicetax_taxbaseamt1}:$V{vat_c_invoicetax_taxbaseamtfull1}]]></textFieldExpression>
 				</textField>
-				<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤">
-					<reportElement x="332" y="0" width="223" height="13" uuid="97abb6bb-be3b-4f72-adc8-08b9c146fd16"/>
+				<textField textAdjust="StretchHeight" pattern="#,##0.00">
+					<reportElement x="390" y="0" width="165" height="13" uuid="97abb6bb-be3b-4f72-adc8-08b9c146fd16"/>
 					<box leftPadding="2" rightPadding="2">
 						<bottomPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
@@ -324,7 +559,17 @@ dateacct,vatdocumentno]]>
 					<textElement verticalAlignment="Middle">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[str("LIT_RP_812_Total")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[str("LIT_REP_812_Total")]]></textFieldExpression>
+				</textField>
+				<textField textAdjust="StretchHeight">
+					<reportElement x="236" y="0" width="58" height="13" uuid="96db4bad-86d9-4ad9-8b4e-b72fbcaa76c2"/>
+					<box leftPadding="2" rightPadding="2">
+						<bottomPen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupFooter>
@@ -345,7 +590,7 @@ dateacct,vatdocumentno]]>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_812_VAT_" + ("D".equals($P{LIT_AccountSign}) ? "Debit" : "Credit"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_812_VAT_" + ("D".equals($P{LIT_AccountSign}) ? "Debit" : "Credit"))]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -353,8 +598,8 @@ dateacct,vatdocumentno]]>
 		<band height="14" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<printWhenExpression><![CDATA[$P{LIT_IsDetail}.equals("Y")]]></printWhenExpression>
-			<textField pattern="#,##0.00 ¤">
-				<reportElement positionType="Float" x="236" y="0" width="96" height="14" uuid="f8a99ef0-87cc-42df-8a0b-5c7742d17fab">
+			<textField pattern="#,##0.00">
+				<reportElement positionType="Float" x="294" y="0" width="96" height="14" uuid="f8a99ef0-87cc-42df-8a0b-5c7742d17fab">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e50a010e-cf67-4444-9581-569d35822a6d"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -364,8 +609,8 @@ dateacct,vatdocumentno]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{LIT_IsExcludeLIPE}.equals("Y")?$F{vat_c_invoicetax_taxbaseamt}:$F{vat_c_invoicetax_taxbaseamtfull}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00 ¤">
-				<reportElement x="332" y="0" width="223" height="14" uuid="a24d2e10-eb95-466a-8d23-c1d15469a9a3">
+			<textField pattern="#,##0.00">
+				<reportElement x="390" y="0" width="165" height="14" uuid="a24d2e10-eb95-466a-8d23-c1d15469a9a3">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e50ad8d4-c95d-4779-b95b-5fe99089fcb8"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -402,12 +647,23 @@ dateacct,vatdocumentno]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{vat_vatdocumentno}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement positionType="Float" x="236" y="0" width="58" height="14" uuid="7cc8e560-e8e1-4545-9944-97287f619a85">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e50a010e-cf67-4444-9581-569d35822a6d"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<lastPageFooter>
 		<band height="20">
-			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤">
-				<reportElement mode="Opaque" x="236" y="6" width="96" height="14" backcolor="#BFBFBF" uuid="b91dc5a1-5234-41e4-b616-3df0a5bbc0a1">
+			<textField textAdjust="StretchHeight" pattern="#,##0.00">
+				<reportElement mode="Opaque" x="294" y="6" width="96" height="14" backcolor="#BFBFBF" uuid="b91dc5a1-5234-41e4-b616-3df0a5bbc0a1">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -417,8 +673,8 @@ dateacct,vatdocumentno]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{LIT_IsExcludeLIPE}.equals("Y")?$V{vat_c_invoicetax_taxbaseamt3}:$V{vat_c_invoicetax_taxbaseamtfull3}]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤">
-				<reportElement mode="Opaque" x="332" y="6" width="223" height="14" backcolor="#BFBFBF" uuid="b756a7ec-0fdb-45b0-bb9b-273bc171da8c">
+			<textField textAdjust="StretchHeight" pattern="#,##0.00">
+				<reportElement mode="Opaque" x="390" y="6" width="165" height="14" backcolor="#BFBFBF" uuid="b756a7ec-0fdb-45b0-bb9b-273bc171da8c">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -438,7 +694,7 @@ dateacct,vatdocumentno]]>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_812_Total" + ("D".equals($P{LIT_AccountSign}) ? "Debit" : "Credit"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_812_Total" + ("D".equals($P{LIT_AccountSign}) ? "Debit" : "Credit"))]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="0" width="555" height="1" uuid="d0576488-ef1b-48fc-b9f0-7dbf8794439e">
@@ -451,6 +707,17 @@ dateacct,vatdocumentno]]>
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</line>
+			<textField>
+				<reportElement mode="Opaque" x="236" y="6" width="58" height="14" backcolor="#BFBFBF" uuid="197bef5c-fa20-4d84-b3b4-77a6aec43096">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
+			</textField>
 		</band>
 	</lastPageFooter>
 </jasperReport>

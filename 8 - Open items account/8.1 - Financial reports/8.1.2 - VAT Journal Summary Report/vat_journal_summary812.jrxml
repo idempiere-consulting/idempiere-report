@@ -6,33 +6,6 @@
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempieredb-report"/>
-	<style name="table">
-		<box>
-			<pen lineWidth="1.0" lineColor="#000000"/>
-		</box>
-		<paragraph lineSpacing="Single"/>
-	</style>
-	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-		<paragraph lineSpacing="Single"/>
-	</style>
-	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-		<paragraph lineSpacing="Single"/>
-	</style>
-	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-		<paragraph lineSpacing="Single"/>
-	</style>
-	<style name="Crosstab Data Text" hTextAlign="Center" hImageAlign="Center">
-		<paragraph lineSpacing="Single"/>
-	</style>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
 	</parameter>
@@ -43,19 +16,25 @@
 	<parameter name="LIT_IsDetail" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="LOCALE_CODE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_LOCALE}.toString()]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[SELECT
      ad_client.ad_client_id,
      lit_vat_period."name" AS lit_vat_period_name,
      lit_vat_period."lit_vat_period_id" AS lit_vat_period_lit_vat_period_id,
      ad_orginfo.LIT_Prorata/100 as lit_prorata,
- 	 lit_adorg_header_portrait_image($P{AD_Org_ID} ),
-	 lit_adorg_footer_portrait_image($P{AD_Org_ID} )
+ 	 lit_adorg_header_portrait_image($P{AD_CLIENT_ID}, $P{AD_Org_ID} ),
+	 lit_adorg_footer_portrait_image($P{AD_CLIENT_ID}, $P{AD_Org_ID} ),
+	lit_datetime_pattern($P{LOCALE_CODE}) AS datetimepattern,
+	 c_currency.iso_code
 FROM
      ad_client
 	 inner join ad_orginfo on ad_client.ad_client_id=ad_orginfo.ad_client_id
 	 INNER JOIN lit_vat_period lit_vat_period ON ad_client."ad_client_id" = lit_vat_period."ad_client_id"
-
+	inner join C_AcctSchema on c_acctschema.ad_client_id = ad_client.ad_client_id
+	inner join c_currency on c_acctschema.c_currency_id = c_currency.c_currency_id
      
 WHERE
      ad_client."ad_client_id" = $P{AD_CLIENT_ID}
@@ -89,6 +68,15 @@ WHERE
 		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_footer_portrait_image"/>
 		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_footer_portrait_image"/>
 	</field>
+	<field name="datetimepattern" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="datetimepattern"/>
+		<property name="com.jaspersoft.studio.field.label" value="datetimepattern"/>
+	</field>
+	<field name="iso_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="iso_code"/>
+		<property name="com.jaspersoft.studio.field.label" value="iso_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_currency"/>
+	</field>
 	<variable name="IVA_DEBITO" class="java.math.BigDecimal" calculation="System"/>
 	<variable name="IVA_CREDITO" class="java.math.BigDecimal" calculation="System"/>
 	<variable name="IVA_DEBITO_REGRESSO" class="java.math.BigDecimal" calculation="System"/>
@@ -105,10 +93,10 @@ WHERE
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_812_Title") + " " + $F{lit_vat_period_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_812_Title") + " " + $F{lit_vat_period_name}]]></textFieldExpression>
 			</textField>
 			<image onErrorType="Blank">
-				<reportElement x="-20" y="0" width="595" height="70" uuid="b0855581-a208-4561-9811-4db76c8af1a0">
+				<reportElement x="-20" y="0" width="595" height="70" isRemoveLineWhenBlank="true" uuid="b0855581-a208-4561-9811-4db76c8af1a0">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<imageExpression><![CDATA[$F{lit_adorg_header_portrait_image}]]></imageExpression>
@@ -123,7 +111,7 @@ WHERE
 				<subreportParameter name="LIT_VAT_PERIOD_ID">
 					<subreportParameterExpression><![CDATA[$P{LIT_VAT_Period_ID}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="AD_ORG_ID">
+				<subreportParameter name="AD_Org_ID">
 					<subreportParameterExpression><![CDATA[$P{AD_Org_ID}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="AD_CLIENT_ID">
@@ -141,6 +129,9 @@ WHERE
 				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="LOCALE_CODE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_LOCALE}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<returnValue subreportVariable="vat_c_invoicetax_taxamt3" toVariable="IVA_DEBITO"/>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "vat_summary.jasper"]]></subreportExpression>
@@ -153,7 +144,7 @@ WHERE
 				<subreportParameter name="LIT_VAT_PERIOD_ID">
 					<subreportParameterExpression><![CDATA[$P{LIT_VAT_Period_ID}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="AD_ORG_ID">
+				<subreportParameter name="AD_Org_ID">
 					<subreportParameterExpression><![CDATA[$P{AD_Org_ID}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="AD_CLIENT_ID">
@@ -171,6 +162,9 @@ WHERE
 				<subreportParameter name="REPORT_RESOURCE_BUNDLE">
 					<subreportParameterExpression><![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="LOCALE_CODE">
+					<subreportParameterExpression><![CDATA[$P{REPORT_LOCALE}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
 				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 				<returnValue subreportVariable="vat_c_invoicetax_taxamt3" toVariable="IVA_CREDITO"/>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "vat_summary.jasper"]]></subreportExpression>
@@ -179,7 +173,7 @@ WHERE
 		<band height="76">
 			<subreport>
 				<reportElement positionType="Float" x="0" y="64" width="555" height="12" uuid="d123a2e0-6c16-431d-acc3-5d2771432317"/>
-				<subreportParameter name="AD_ORG_ID">
+				<subreportParameter name="AD_Org_ID">
 					<subreportParameterExpression><![CDATA[$P{AD_Org_ID}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="AD_CLIENT_ID">
@@ -195,7 +189,7 @@ WHERE
 				<returnValue subreportVariable="vdiff" toVariable="IVA_CREDITOPREC"/>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "vat_summary_residual.jasper"]]></subreportExpression>
 			</subreport>
-			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="true">
+			<textField textAdjust="ScaleFont" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="469" y="42" width="86" height="14" forecolor="#000000" backcolor="#BFBFBF" uuid="d92fe68e-93d8-4d99-96c3-535ccde1aece">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -207,17 +201,17 @@ WHERE
 				<textFieldExpression><![CDATA[$V{IVA_DEBITO}.subtract($V{IVA_CREDITO}).add($V{IVA_CREDITO}.multiply( $F{lit_prorata} ))]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" mode="Opaque" x="0" y="42" width="469" height="14" backcolor="#BFBFBF" uuid="ccca1e2f-4da7-4584-9826-cf552c84e988">
+				<reportElement positionType="Float" mode="Opaque" x="0" y="42" width="410" height="14" backcolor="#BFBFBF" uuid="ccca1e2f-4da7-4584-9826-cf552c84e988">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_812_Difference")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_812_Difference")]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="210" y="9" width="345" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d65d200d-9e3a-4eea-acec-2bed099dcd12">
+			<textField textAdjust="ScaleFont" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="469" y="9" width="86" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d65d200d-9e3a-4eea-acec-2bed099dcd12">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -228,16 +222,16 @@ WHERE
 					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{IVA_CREDITO}.multiply( $F{lit_prorata} )]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{IVA_CREDITO} != null ? $V{IVA_CREDITO} : BigDecimal.ZERO).multiply( $F{lit_prorata} )]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.##%">
-				<reportElement x="120" y="9" width="90" height="14" uuid="25ce3883-77bb-4d60-b4b0-77bb3fa3d0c7">
+				<reportElement x="120" y="9" width="290" height="14" uuid="25ce3883-77bb-4d60-b4b0-77bb3fa3d0c7">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{lit_prorata}]]></textFieldExpression>
@@ -250,19 +244,19 @@ WHERE
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_812_VAT_Deducted")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_812_VAT_Deducted")]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" mode="Opaque" x="0" y="28" width="469" height="14" backcolor="#BFBFBF" uuid="42cdf338-787c-471d-8b75-7a39a2abf706">
+				<reportElement positionType="Float" mode="Opaque" x="0" y="28" width="410" height="14" backcolor="#BFBFBF" uuid="42cdf338-787c-471d-8b75-7a39a2abf706">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement verticalAlignment="Middle">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_812_TotalCredit")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_812_TotalCredit")]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="true">
+			<textField textAdjust="ScaleFont" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement positionType="Float" mode="Opaque" x="469" y="28" width="86" height="14" forecolor="#000000" backcolor="#BFBFBF" uuid="33f24ee9-5c44-4424-b21d-a7130d115ab0">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -274,9 +268,47 @@ WHERE
 				</textElement>
 				<textFieldExpression><![CDATA[$V{IVA_CREDITO}.subtract($V{IVA_CREDITO}.multiply( $F{lit_prorata} ))]]></textFieldExpression>
 			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="410" y="9" width="59" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="623ef9ad-9a36-4bd7-8dd0-67d271677150">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2">
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="410" y="28" width="59" height="14" forecolor="#000000" backcolor="#BFBFBF" uuid="2ef707d0-cd33-452a-81bf-7a6527deff74">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="410" y="42" width="59" height="14" forecolor="#000000" backcolor="#BFBFBF" uuid="909e1d21-84b0-456c-9965-f319e039760e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
+			</textField>
 		</band>
 		<band height="24">
-			<textField textAdjust="StretchHeight" pattern="#,##0.00 ¤" isBlankWhenNull="true">
+			<textField textAdjust="ScaleFont" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="469" y="10" width="86" height="14" forecolor="#000000" backcolor="#BFBFBF" uuid="d2554107-cfc1-4186-ab90-89b35406af82">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -286,11 +318,22 @@ WHERE
 					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{IVA_CREDITOPREC}.subtract(
-$V{IVA_DEBITO}.subtract($V{IVA_CREDITO}).add($V{IVA_CREDITO}.multiply( $F{lit_prorata} )))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($V{IVA_CREDITOPREC} != null ? $V{IVA_CREDITOPREC} : BigDecimal.ZERO)
+.subtract(
+    ($V{IVA_DEBITO} != null ? $V{IVA_DEBITO} : BigDecimal.ZERO)
+    .subtract(
+        ($V{IVA_CREDITO} != null ? $V{IVA_CREDITO} : BigDecimal.ZERO)
+    )
+    .add(
+        ($V{IVA_CREDITO} != null ? $V{IVA_CREDITO} : BigDecimal.ZERO)
+        .multiply(
+            $F{lit_prorata}
+        )
+    )
+)]]></textFieldExpression>
 			</textField>
-			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Opaque" x="0" y="10" width="469" height="14" backcolor="#BFBFBF" uuid="0bc20e6b-8782-412a-8e51-f31f42d4dfac">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
+				<reportElement positionType="Float" mode="Opaque" x="0" y="10" width="410" height="14" backcolor="#BFBFBF" uuid="0bc20e6b-8782-412a-8e51-f31f42d4dfac">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
 				</reportElement>
@@ -298,44 +341,55 @@ $V{IVA_DEBITO}.subtract($V{IVA_CREDITO}).add($V{IVA_CREDITO}.multiply( $F{lit_pr
 				<textElement verticalAlignment="Middle" markup="none">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($V{IVA_CREDITOPREC}.intValue() - ($V{IVA_DEBITO}.intValue()-$V{IVA_CREDITO}.intValue()) > 0 ? str("LIT_RP_812_CreditPeriod") : str("LIT_RP_812_VatDue"))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[BigDecimal.ZERO.compareTo(
+    ($V{IVA_CREDITOPREC} != null ? $V{IVA_CREDITOPREC} : BigDecimal.ZERO)
+    .subtract(
+        ($V{IVA_DEBITO} != null ? $V{IVA_DEBITO} : BigDecimal.ZERO)
+        .subtract(
+            ($V{IVA_CREDITO} != null ? $V{IVA_CREDITO} : BigDecimal.ZERO)
+        )
+    )
+) < 0 ? str("LIT_REP_812_CreditPeriod") : str("LIT_REP_812_VatDue")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="410" y="10" width="59" height="14" forecolor="#000000" backcolor="#BFBFBF" uuid="c3fe64a6-b26f-4d86-ac6a-520f578aa3f7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iso_code}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
 	<pageFooter>
 		<band height="92">
 			<image onErrorType="Blank">
-				<reportElement x="-20" y="22" width="595" height="70" uuid="259b1e47-be5d-4e62-b79a-f321aeaacd15">
+				<reportElement x="-20" y="22" width="595" height="70" isRemoveLineWhenBlank="true" uuid="259b1e47-be5d-4e62-b79a-f321aeaacd15">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<imageExpression><![CDATA[$F{lit_adorg_footer_portrait_image}]]></imageExpression>
 			</image>
-			<textField evaluationTime="Report">
-				<reportElement x="530" y="0" width="24" height="10" uuid="cf6d6767-4d67-45ec-a75d-97d490eb795e">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Left">
-					<font fontName="dialog" size="7" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
 			<textField>
-				<reportElement x="455" y="0" width="74" height="10" uuid="5c58a155-268d-4795-a66c-54cd08228046">
+				<reportElement x="481" y="4" width="74" height="10" uuid="5c58a155-268d-4795-a66c-54cd08228046">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Right">
 					<font fontName="dialog" size="7" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}+" / "]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="113" height="10" uuid="3c56a544-a39e-4e66-9c6f-c4f56d7fc42e">
+				<reportElement x="0" y="4" width="113" height="10" uuid="3c56a544-a39e-4e66-9c6f-c4f56d7fc42e">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement verticalAlignment="Middle">
 					<font fontName="dialog" size="7" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["RP.812" + " - " + new java.text.SimpleDateFormat("dd/MM/yyyy").format(new Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA["RP.812" + " - " + new SimpleDateFormat($F{datetimepattern}, $P{REPORT_LOCALE}).format(new Date())]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>

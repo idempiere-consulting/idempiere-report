@@ -128,7 +128,7 @@ order by  c_invoicepayschedule."duedate"]]>
 					<font size="8"/>
 					<paragraph lineSpacing="Single" leftIndent="4"/>
 				</textElement>
-				<textFieldExpression><![CDATA[T(new SimpleDateFormat($F{datepattern}, new Locale($P{LOCALE_CODE})).format($F{c_invoicepayschedule_duedate}))]]></textFieldExpression>
+				<textFieldExpression><![CDATA[T(new SimpleDateFormat($F{datepattern}, $P{REPORT_LOCALE}).format($F{c_invoicepayschedule_duedate}))]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="ScaleFont" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="easy_read" positionType="Float" x="125" y="0" width="125" height="12" uuid="c27120cc-da36-4c16-b05e-d845b2f7a393">

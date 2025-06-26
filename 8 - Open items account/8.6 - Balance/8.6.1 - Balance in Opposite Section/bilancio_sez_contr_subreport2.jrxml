@@ -20,6 +20,7 @@
 		<defaultValueExpression><![CDATA[new BigDecimal(0)]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Sezione" class="java.lang.Integer"/>
+	<parameter name="iso_code" class="java.lang.String" isForPrompting="false"/>
 	<queryString>
 		<![CDATA[select UtilePerdita, UtilePerditaNoSegno, descrizione,
 case when UtilePerdita >= 0 then SubPer + UtilePerditaNoSegno else SubPro + UtilePerditaNoSegno end as Sommano,
@@ -60,7 +61,7 @@ from (select $P{SubPro} - $P{SubPer} AS UtilePerdita, $P{SubPro} as SubPro, $P{S
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="25" splitType="Stretch">
+		<band height="22" splitType="Stretch">
 			<printWhenExpression><![CDATA[($F{descrbreve}.equalsIgnoreCase( "P" )  & $P{Sezione}==2) || ($F{descrbreve}.equalsIgnoreCase( "U" )  & $P{Sezione}==1)]]></printWhenExpression>
 			<line>
 				<reportElement positionType="Float" x="0" y="11" width="280" height="1" uuid="cd744b83-fb44-46e0-b1fb-092a83b74e04"/>
@@ -69,7 +70,7 @@ from (select $P{SubPro} - $P{SubPer} AS UtilePerdita, $P{SubPro} as SubPro, $P{S
 				</graphicElement>
 			</line>
 			<textField>
-				<reportElement key="staticText-1" positionType="Float" x="0" y="12" width="211" height="10" forecolor="#000000" uuid="8b56088f-9fc0-40ae-81bb-afd6dd41fdbe"/>
+				<reportElement key="staticText-1" positionType="Float" x="0" y="12" width="170" height="10" forecolor="#000000" uuid="8b56088f-9fc0-40ae-81bb-afd6dd41fdbe"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -79,9 +80,9 @@ from (select $P{SubPro} - $P{SubPer} AS UtilePerdita, $P{SubPro} as SubPro, $P{S
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[str("LIT_RP_861_SumBreakeven")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[str("LIT_REP_861_SumBreakeven")]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤#,##0.##">
+			<textField pattern="#,##0.00">
 				<reportElement x="211" y="0" width="69" height="10" uuid="46e48fe5-03ca-48bc-acf0-e3230f23d07f"/>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -90,19 +91,39 @@ from (select $P{SubPro} - $P{SubPer} AS UtilePerdita, $P{SubPro} as SubPro, $P{S
 				<textFieldExpression><![CDATA[$F{utileperditanosegno}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="0" width="211" height="10" uuid="906219eb-2f21-4b2b-be1f-58e7d407cde3"/>
+				<reportElement x="0" y="0" width="170" height="10" uuid="906219eb-2f21-4b2b-be1f-58e7d407cde3"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤#,##0.##" isBlankWhenNull="true">
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="211" y="12" width="69" height="10" uuid="ccd55d6a-af4a-442b-9f91-c59050493e04"/>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="7" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{sommano}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="170" y="0" width="41" height="10" uuid="32a7a8d9-1f50-4558-b47f-53bb737af616"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{iso_code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-1" positionType="Float" x="170" y="12" width="41" height="10" forecolor="#000000" uuid="f620cdf6-f4c5-476a-adca-01f349462bf0"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{iso_code}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
