@@ -318,7 +318,7 @@ WHERE
 					<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($V{IVA_CREDITOPREC} != null ? $V{IVA_CREDITOPREC} : BigDecimal.ZERO)
+				<textFieldExpression><![CDATA[ABS(($V{IVA_CREDITOPREC} != null ? $V{IVA_CREDITOPREC} : BigDecimal.ZERO)
 .subtract(
     ($V{IVA_DEBITO} != null ? $V{IVA_DEBITO} : BigDecimal.ZERO)
     .subtract(
@@ -330,7 +330,7 @@ WHERE
             $F{lit_prorata}
         )
     )
-)]]></textFieldExpression>
+))]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement positionType="Float" mode="Opaque" x="0" y="10" width="410" height="14" backcolor="#BFBFBF" uuid="0bc20e6b-8782-412a-8e51-f31f42d4dfac">
@@ -349,7 +349,7 @@ WHERE
             ($V{IVA_CREDITO} != null ? $V{IVA_CREDITO} : BigDecimal.ZERO)
         )
     )
-) < 0 ? str("LIT_REP_812_CreditPeriod") : str("LIT_REP_812_VatDue")]]></textFieldExpression>
+) <= 0 ? str("LIT_REP_812_CreditPeriod") : str("LIT_REP_812_VatDue")]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="410" y="10" width="59" height="14" forecolor="#000000" backcolor="#BFBFBF" uuid="c3fe64a6-b26f-4d86-ac6a-520f578aa3f7">

@@ -210,7 +210,7 @@
   WHERE c_bankaccount.isprinted = 'Y'::bpchar
     AND
      (CASE
-    WHEN 1000058 IS NOT NULL THEN c_invoice.c_invoice_id = $P{RECORD_ID}
+    WHEN $P{RECORD_ID} IS NOT NULL THEN c_invoice.c_invoice_id = $P{RECORD_ID}
     ELSE 1=1
   END)
   ORDER BY c_invoiceline.line]]>
@@ -1240,7 +1240,6 @@
 				<reportElement positionType="Float" stretchType="ContainerHeight" mode="Opaque" x="303" y="0" width="67" height="13" uuid="e7cb5823-9d87-4ec8-a6b8-89b3c4817e39">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[!($F{c_invoiceline_isdescription}.equals("Y"))]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1252,7 +1251,7 @@
 					<font size="7" isBold="false"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{c_invoiceline_qtyentered}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[!($F{c_invoiceline_isdescription}.equals("Y")) ? $F{c_invoiceline_qtyentered} : ""]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="ContainerHeight" mode="Opaque" x="454" y="0" width="55" height="13" uuid="afb4b6c5-1dcf-4887-aaf7-39936d8fc83a">
@@ -1260,7 +1259,6 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-					<printWhenExpression><![CDATA[!($F{c_invoiceline_isdescription}.equals("Y"))]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1272,10 +1270,10 @@
 					<font size="7" isBold="true"/>
 					<paragraph lineSpacing="Single" leftIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{c_invoiceline_linenetamt}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[!($F{c_invoiceline_isdescription}.equals("Y")) ? $F{c_invoiceline_linenetamt} : ""]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
-				<reportElement positionType="Float" stretchType="ContainerHeight" mode="Opaque" x="0" y="0" width="85" height="13" isRemoveLineWhenBlank="true" uuid="a13198c1-e0f4-4d47-a902-0de5a90b0dd2">
+				<reportElement positionType="Float" stretchType="ContainerHeight" mode="Opaque" x="0" y="0" width="85" height="13" uuid="a13198c1-e0f4-4d47-a902-0de5a90b0dd2">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -1297,7 +1295,6 @@
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
 					<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
-					<printWhenExpression><![CDATA[!($F{c_invoiceline_isdescription}.equals("Y"))]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1309,7 +1306,7 @@
 					<font size="7" isBold="false"/>
 					<paragraph lineSpacing="Single" rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{c_tax_taxindicator}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[!($F{c_invoiceline_isdescription}.equals("Y")) ? $F{c_tax_taxindicator} : ""]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="ContainerHeight" mode="Opaque" x="270" y="0" width="33" height="13" uuid="60e5e758-d0d4-4e37-b44f-bd1a1dd213b1">
@@ -1333,7 +1330,6 @@
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<printWhenExpression><![CDATA[!($F{c_invoiceline_isdescription}.equals("Y"))]]></printWhenExpression>
 				</reportElement>
 				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1345,7 +1341,7 @@
 					<font size="7" isBold="false"/>
 					<paragraph lineSpacing="Single" leftIndent="2" rightIndent="2"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{ad_sysconfig_printpricelist}.equals("Y") ?$F{c_invoiceline_pricelist}:$F{c_invoiceline_priceactual}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[!($F{c_invoiceline_isdescription}.equals("Y")) ? $F{ad_sysconfig_printpricelist}.equals("Y") ?$F{c_invoiceline_pricelist}:$F{c_invoiceline_priceactual} : ""]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement positionType="Float" stretchType="ContainerHeight" mode="Opaque" x="85" y="0" width="185" height="13" uuid="6d29dead-0b32-42d5-b4dd-586e37d75ec1">
@@ -1365,7 +1361,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{c_invoiceline_name}!=null?$F{c_invoiceline_name}:$F{m_product_name}!=null?$F{m_product_name}:"")
 +
-($F{ad_sysconfig_printdescription}.equals("Y") && $F{c_invoiceline_description} != null ? ("\n" + $F{c_invoiceline_description}) : "")]]></textFieldExpression>
+($F{ad_sysconfig_printdescription}.equals("Y") && $F{c_invoiceline_description} != null ? ((($F{c_invoiceline_name}!=null || $F{m_product_name}!=null) ? "\n" : "") + $F{c_invoiceline_description}) : "")]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="9">
@@ -1387,7 +1383,7 @@
 				<textFieldExpression><![CDATA[$F{lit_intrastat_value}]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
-				<reportElement positionType="Float" isPrintRepeatedValues="false" x="85" y="0" width="470" height="9" forecolor="#000000" uuid="97dfe0be-e292-4638-b8a3-6b155297ba2f">
+				<reportElement positionType="Float" isPrintRepeatedValues="false" x="85" y="0" width="470" height="9" isRemoveLineWhenBlank="true" forecolor="#000000" uuid="97dfe0be-e292-4638-b8a3-6b155297ba2f">
 					<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>

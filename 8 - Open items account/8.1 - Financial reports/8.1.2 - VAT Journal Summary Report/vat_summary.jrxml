@@ -513,7 +513,7 @@ dateacct,vatdocumentno]]>
 					<textElement textAlignment="Right">
 						<font size="8" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[str("LIT_REP_812_Debit")]]></textFieldExpression>
+					<textFieldExpression><![CDATA[str("LIT_REP_812_" + ("D".equals($P{LIT_AccountSign}) ? "Debit" : "Credit"))]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="ScaleFont">
 					<reportElement x="236" y="0" width="58" height="13" uuid="0cada874-24cd-4e2c-bc99-cf0b95be222e">

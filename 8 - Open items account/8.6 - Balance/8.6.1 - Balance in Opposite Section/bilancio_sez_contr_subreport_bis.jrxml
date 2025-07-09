@@ -127,57 +127,7 @@ $F{lv6_value} == null]]></conditionExpression>
 	</parameter>
 	<parameter name="IsExclude" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[WITH RECURSIVE element_tree AS (
-    SELECT
-        ev.c_elementvalue_id,
-        0 AS depth,
-        ev.value AS lv0_value,
-        ev.name  AS lv0_name,
-        NULL::varchar AS lv1_value,
-        NULL::varchar AS lv1_name,
-        NULL::varchar AS lv2_value,
-        NULL::varchar AS lv2_name,
-        NULL::varchar AS lv3_value,
-        NULL::varchar AS lv3_name,
-        NULL::varchar AS lv4_value,
-        NULL::varchar AS lv4_name,
-        NULL::varchar AS lv5_value,
-        NULL::varchar AS lv5_name,
-        NULL::varchar AS lv6_value,
-        NULL::varchar AS lv6_name
-    FROM ad_treenode tn
-    JOIN c_elementvalue ev ON ev.c_elementvalue_id = tn.node_id
-    WHERE tn.parent_id = 0
-      AND tn.ad_tree_id = (
-          SELECT ad_tree_id FROM ad_tree
-          WHERE treetype = 'EV' AND ad_client_id = $P{AD_CLIENT_ID}
-          LIMIT 1
-      )
-      and ev.isSummary = 'Y'
-    UNION ALL
-    SELECT
-        ev.c_elementvalue_id,
-        et.depth + 1,
-        et.lv0_value,
-        et.lv0_name,
-        CASE WHEN et.depth = 0 THEN ev.value ELSE et.lv1_value END,
-        CASE WHEN et.depth = 0 THEN ev.name  ELSE et.lv1_name END,
-        CASE WHEN et.depth = 1 THEN ev.value ELSE et.lv2_value END,
-        CASE WHEN et.depth = 1 THEN ev.name  ELSE et.lv2_name END,
-        CASE WHEN et.depth = 2 THEN ev.value ELSE et.lv3_value END,
-        CASE WHEN et.depth = 2 THEN ev.name  ELSE et.lv3_name END,
-        CASE WHEN et.depth = 3 THEN ev.value ELSE et.lv4_value END,
-        CASE WHEN et.depth = 3 THEN ev.name  ELSE et.lv4_name END,
-        CASE WHEN et.depth = 4 THEN ev.value ELSE et.lv5_value END,
-        CASE WHEN et.depth = 4 THEN ev.name  ELSE et.lv5_name end,
-        CASE WHEN et.depth = 5 THEN ev.value ELSE et.lv6_value END,
-        CASE WHEN et.depth = 5 THEN ev.name  ELSE et.lv6_name END
-    FROM ad_treenode tn
-    JOIN c_elementvalue ev ON ev.c_elementvalue_id = tn.node_id
-    JOIN element_tree et ON tn.parent_id = et.c_elementvalue_id
-    where ev.isSummary = 'Y'
-)
-select ce.c_elementvalue_id, lv0_value, lv0_name, lv1_value, lv1_name, lv2_value, lv2_name,
+		<![CDATA[select ce.c_elementvalue_id, lv0_value, lv0_name, lv1_value, lv1_name, lv2_value, lv2_name,
 lv3_value, lv3_name, lv4_value, lv4_name, lv5_value, lv5_name,
 lv6_value, lv6_name, ce.value, ce.name,
 case
@@ -233,7 +183,8 @@ case
       when ce.accounttype in ('R') and fa.dateacct between $P{DateAcct1} and $P{DateAcct2} then (fa.amtacctdr-fa.amtacctcr)*-1 end), 0) as SALDO
 FROM ad_treenode tn
 JOIN c_elementvalue ce ON ce.c_elementvalue_id = tn.node_id
-JOIN element_tree et ON tn.parent_id = et.c_elementvalue_id
+inner join lateral get_ev_tree($P{AD_CLIENT_ID}, $P{AD_Org_ID}) et on
+	tn.parent_id = et.c_elementvalue_id
 left join fact_acct fa
   on
 	(fa.account_id = ce.c_elementvalue_id
