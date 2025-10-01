@@ -1,0 +1,1356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="402 - c_order_po" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" isSummaryWithPageHeaderAndFooter="true" uuid="2e03aa4a-78f2-4014-adc8-1ab4143b4d6e">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="594"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempieredb-report-dev"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="Header" mode="Opaque" backcolor="#D9D9D9"/>
+	<style name="EasyRead">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2==1]]></conditionExpression>
+			<style mode="Opaque" backcolor="#EEEEEE"/>
+		</conditionalStyle>
+	</style>
+	<subDataset name="VATSummary" uuid="46c7fbd6-04b9-4b9a-9109-0ec072e24632">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempieredb-report-dev"/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<parameter name="RECORD_ID" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select
+	c_ordertax.taxbaseamt as c_ordertax_taxbaseamt,
+	c_ordertax.taxamt as c_ordertax_taxamt,
+	c_currency.iso_code as c_currency_iso_code,
+	c_tax.taxindicator as c_tax_taxindicator
+from
+	c_tax
+right join c_ordertax on
+	c_tax.c_tax_id = c_ordertax.c_tax_id
+right join c_order on
+	c_ordertax.c_order_id = c_order.c_order_id
+left join c_currency on
+	c_order.c_currency_id = c_currency.c_currency_id
+where
+	c_ordertax.c_order_id = $P{RECORD_ID}]]>
+		</queryString>
+		<field name="c_ordertax_taxbaseamt" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="c_ordertax_taxbaseamt"/>
+			<property name="com.jaspersoft.studio.field.label" value="c_ordertax_taxbaseamt"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="c_ordertax"/>
+		</field>
+		<field name="c_ordertax_taxamt" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="c_ordertax_taxamt"/>
+			<property name="com.jaspersoft.studio.field.label" value="c_ordertax_taxamt"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="c_ordertax"/>
+		</field>
+		<field name="c_currency_iso_code" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="c_currency_iso_code"/>
+			<property name="com.jaspersoft.studio.field.label" value="c_currency_iso_code"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="c_currency"/>
+		</field>
+		<field name="c_tax_taxindicator" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="c_tax_taxindicator"/>
+			<property name="com.jaspersoft.studio.field.label" value="c_tax_taxindicator"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="c_tax"/>
+		</field>
+	</subDataset>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RECORD_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOCALE_CODE" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{REPORT_LOCALE}.toString()]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+	lit_adorg_header_portrait_image(ad_orginfo.ad_client_id, ad_orginfo.ad_org_id) as header_image,
+	lit_adorg_footer_portrait_image(ad_orginfo.ad_client_id, ad_orginfo.ad_org_id) as footer_image,
+	(
+	select
+		coalesce(datepattern, 'yyyy-MM-dd')
+	from
+		ad_language
+	where
+		ad_language = $P{LOCALE_CODE})as datepattern,
+	(
+	select
+		coalesce(timepattern, 'HH:mm:ss')
+	from
+		ad_language
+	where
+		ad_language = $P{LOCALE_CODE})as timepattern,
+	c_bpartner.name as c_bpartner_name,
+	c_currency.iso_code as c_currency_iso_code,
+	m_product.name as m_product_name,
+	m_product.description as m_product_description,
+	m_product.help as m_product_help,
+	m_product.value as m_product_value,
+	c_location.address1 as c_location_address1,
+	c_location.city as c_location_city,
+	c_location.postal as c_location_postal,
+	c_location.regionname as c_location_regionname,
+	coalesce(c_country_trl.name, c_country.name) as c_country_name,
+	c_bpartner_location.phone as c_bpartner_location_phone,
+	c_order.documentno as c_order_documentno,
+	c_order.dateordered as c_order_dateordered,
+	c_orderline.description as c_orderline_description,
+	c_orderline.linenetamt as c_orderline_linenetamt,
+	c_orderline.qtyentered as c_orderline_qtyentered,
+	c_order.datepromised as c_order_datepromised,
+	m_warehouse.name as m_warehouse_name,
+	c_location_warehouse.city as c_location_warehouse_city,
+	c_location_warehouse.address1 as c_location_warehouse_address1,
+	c_location_warehouse.postal as c_location_warehouse_postal,
+	c_location_warehouse.regionname as c_location_warehouse_regionname,
+	coalesce(c_country_trl_warehouse.name, c_country_warehouse.name) as c_country_warehouse_name,
+	ad_user.name as ad_user_name,
+	coalesce(c_paymentterm_trl.name, c_paymentterm.name) as c_paymentterm_name,
+	coalesce(ad_ref_list_trl_deliveryviarule.name, ad_ref_list_deliveryviarule.name) as c_order_deliveryviarule,
+	coalesce(ad_ref_list_trl_paymentrule.name, ad_ref_list_paymentrule.name) as c_order_paymentrule,
+	c_orderline.discount as c_orderline_discount,
+	c_order.description as c_order_description,
+	coalesce(c_doctype_trl.name, c_doctype.name) as c_doctype_name,
+	coalesce(c_doctype_trl.printname, c_doctype.printname) as c_doctype_printname,
+	ad_orginfo.email as ad_orginfo_email,
+	c_tax.taxindicator as c_tax_taxindicator,
+	c_orderline.pricelist as c_orderline_pricelist,
+	coalesce(c_uom_trl.uomsymbol, c_uom.uomsymbol) as c_uom_uomsymbol,
+	c_orderline.name as c_orderline_name,
+	c_order.grandtotal as c_order_grandtotal,
+	c_order.docstatus as c_order_docstatus,
+	c_orderline.help as c_orderline_help,
+	c_bpartner_dropship.name as c_bpartner_dropship_name,
+	c_location_dropship.address1 as c_location_dropship_address1,
+	c_location_dropship.city as c_location_dropship_city,
+	c_location_dropship.postal as c_location_dropship_postal,
+	c_location_dropship.regionname as c_location_dropship_regionname,
+	coalesce(c_country_trl_dropship.name, c_country_dropship.name) as c_country_dropship_name,
+	c_order.isdropship as c_order_isdropship,
+	m_shipper.name as m_shipper_name,
+	lit_tables_freightcost.name as lit_freightcost_name,
+	lit_c_bank_v.c_bank_name as c_bank_name,
+	lit_c_bank_v.c_bankaccount_iban as c_bankaccount_iban,
+	lit_c_bank_v.c_bank_swiftcode as c_bank_swiftcode,
+	c_order.note as c_order_note,
+	c_project.value as c_project_value,
+	c_orderline.datepromised as c_orderline_datepromised,
+	m_product_po.vendorproductno as m_product_po_vendorproductno,
+	ad_orginfo.lit_report_param as ad_orginfo_lit_report_param,
+	lit_tables.name as c_order_lit_termsandconditions_name,
+	lit_tables.description as c_order_lit_termsandconditions_description,
+	lit_tables_exclusions.name as c_order_lit_exclusion_name,
+	lit_tables_exclusions.description as c_order_lit_exclusion_description
+from
+	c_order
+inner join ad_org on c_order.ad_org_id = ad_org.ad_org_id
+inner join ad_orginfo on ad_org.ad_org_id = ad_orginfo.ad_org_id
+inner join c_bpartner on c_order.c_bpartner_id = c_bpartner.c_bpartner_id
+inner join c_currency on c_order.c_currency_id = c_currency.c_currency_id
+left join c_orderline on c_order.c_order_id = c_orderline.c_order_id
+left join m_product on c_orderline.m_product_id = m_product.m_product_id
+left join c_bpartner_location on	c_bpartner.c_bpartner_id = c_bpartner_location.c_bpartner_id
+left join c_location on	c_bpartner_location.c_location_id = c_location.c_location_id
+left join c_country on c_location.c_country_id = c_country.c_country_id
+left join c_country_trl on c_country.c_country_id = c_country_trl.c_country_id and c_country_trl.ad_language = $P{LOCALE_CODE}
+left join m_warehouse on c_order.m_warehouse_id = m_warehouse.m_warehouse_id
+left join c_location c_location_warehouse on m_warehouse.c_location_id = c_location_warehouse.c_location_id
+left join c_country c_country_warehouse on c_location_warehouse.c_country_id = c_country_warehouse.c_country_id
+left join c_country_trl c_country_trl_warehouse on c_country_warehouse.c_country_id = c_country_trl_warehouse.c_country_id and c_country_trl_warehouse.ad_language = $P{LOCALE_CODE}
+left join ad_user on c_order.ad_user_id = ad_user.ad_user_id
+left join c_paymentterm on c_order.c_paymentterm_id = c_paymentterm.c_paymentterm_id
+left join c_paymentterm_trl on c_paymentterm.c_paymentterm_id = c_paymentterm_trl.c_paymentterm_id and c_paymentterm_trl.ad_language = $P{LOCALE_CODE} 
+left join ad_ref_list ad_ref_list_deliveryviarule on c_order.deliveryviarule = ad_ref_list_deliveryviarule.value and ad_ref_list_deliveryviarule.ad_reference_id = 152
+left join ad_ref_list_trl ad_ref_list_trl_deliveryviarule on ad_ref_list_deliveryviarule.ad_ref_list_id = ad_ref_list_trl_deliveryviarule.ad_ref_list_id and ad_ref_list_trl_deliveryviarule.ad_language = $P{LOCALE_CODE}
+left join ad_ref_list ad_ref_list_paymentrule on c_order.paymentrule = ad_ref_list_paymentrule.value and ad_ref_list_paymentrule.ad_reference_id = 195
+left join ad_ref_list_trl ad_ref_list_trl_paymentrule on ad_ref_list_paymentrule.ad_ref_list_id = ad_ref_list_trl_paymentrule.ad_ref_list_id and ad_ref_list_trl_paymentrule.ad_language = $P{LOCALE_CODE}
+left join c_doctype on c_order.c_doctypetarget_id = c_doctype.c_doctype_id
+left join c_doctype_trl on c_doctype.c_doctype_id = c_doctype_trl.c_doctype_id and c_doctype_trl.ad_language = $P{LOCALE_CODE}
+left join c_tax on c_orderline.c_tax_id = c_tax.c_tax_id
+left join c_uom on c_uom.c_uom_id = m_product.c_uom_id
+left join c_uom_trl on c_uom.c_uom_id = c_uom_trl.c_uom_id and c_uom_trl.ad_language = $P{LOCALE_CODE}
+left join c_bpartner c_bpartner_dropship on c_order.dropship_bpartner_id = c_bpartner_dropship.c_bpartner_id
+left join c_bpartner_location c_bpartner_location_dropship on c_order.dropship_location_id = c_bpartner_location_dropship.c_bpartner_location_id and c_bpartner_location_dropship.isbillto = 'Y'
+left join c_location c_location_dropship on c_bpartner_location_dropship.c_location_id = c_location_dropship.c_location_id
+left join c_country c_country_dropship on c_location_dropship.c_country_id = c_country_dropship.c_country_id
+left join c_country_trl c_country_trl_dropship on c_country_dropship.c_country_id = c_country_trl_dropship.c_country_id and c_country_trl_dropship.ad_language = $P{LOCALE_CODE}
+left join m_shipper on c_order.m_shipper_id = m_shipper.m_shipper_id
+left join lit_tables lit_tables_freightcost on c_order.lit_freightcost_id = lit_tables_freightcost.lit_tables_id
+left join lit_c_bank_v on c_order.ad_client_id = lit_c_bank_v.c_bank_ad_client_id and lit_c_bank_v.c_bank_ad_org_id = c_order.ad_org_id
+left join c_project on c_order.c_project_id = c_project.c_project_id
+left join m_product_po on c_orderline.c_bpartner_id = m_product_po.c_bpartner_id and m_product_po.m_product_id = m_product.m_product_id
+left join lit_tables on lit_tables.lit_tables_id = c_order.lit_termsandconditions_id
+left join lit_tables lit_tables_exclusions on c_order.lit_exclusion_id = lit_tables_exclusions.lit_tables_id
+where
+	c_order.c_order_id = $P{RECORD_ID}
+order by
+	c_orderline.line asc]]>
+	</queryString>
+	<field name="header_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="header_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="header_image"/>
+	</field>
+	<field name="footer_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="footer_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="footer_image"/>
+	</field>
+	<field name="datepattern" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="datepattern"/>
+		<property name="com.jaspersoft.studio.field.label" value="datepattern"/>
+	</field>
+	<field name="timepattern" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="timepattern"/>
+		<property name="com.jaspersoft.studio.field.label" value="timepattern"/>
+	</field>
+	<field name="c_bpartner_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
+	</field>
+	<field name="c_currency_iso_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_currency_iso_code"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_currency_iso_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_currency"/>
+	</field>
+	<field name="m_product_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="m_product_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="m_product_help" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_help"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_help"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="m_product_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product"/>
+	</field>
+	<field name="c_location_address1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_address1"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_address1"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_location_city" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_city"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_city"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_location_postal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_postal"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_postal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_location_regionname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_regionname"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_regionname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_country_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_country_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_country_name"/>
+	</field>
+	<field name="c_bpartner_location_phone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_location_phone"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_location_phone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner_location"/>
+	</field>
+	<field name="c_order_documentno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_documentno"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_documentno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_order"/>
+	</field>
+	<field name="c_order_dateordered" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_dateordered"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_dateordered"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_order"/>
+	</field>
+	<field name="c_orderline_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_orderline_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_orderline_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="c_orderline_linenetamt" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_orderline_linenetamt"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_orderline_linenetamt"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="c_orderline_qtyentered" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_orderline_qtyentered"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_orderline_qtyentered"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="c_order_datepromised" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_datepromised"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_datepromised"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_order"/>
+	</field>
+	<field name="m_warehouse_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="m_warehouse_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_warehouse_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_warehouse"/>
+	</field>
+	<field name="c_location_warehouse_city" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_warehouse_city"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_warehouse_city"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_location_warehouse_address1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_warehouse_address1"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_warehouse_address1"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_location_warehouse_postal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_warehouse_postal"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_warehouse_postal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_location_warehouse_regionname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_warehouse_regionname"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_warehouse_regionname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_country_warehouse_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_country_warehouse_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_country_warehouse_name"/>
+	</field>
+	<field name="ad_user_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ad_user_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_user_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_user"/>
+	</field>
+	<field name="c_paymentterm_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_paymentterm_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_paymentterm_name"/>
+	</field>
+	<field name="c_order_deliveryviarule" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_deliveryviarule"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_deliveryviarule"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_ref_list_trl"/>
+	</field>
+	<field name="c_order_paymentrule" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_paymentrule"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_paymentrule"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_ref_list_trl"/>
+	</field>
+	<field name="c_orderline_discount" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_orderline_discount"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_orderline_discount"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="c_order_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_order"/>
+	</field>
+	<field name="c_doctype_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_doctype_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_doctype_name"/>
+	</field>
+	<field name="c_doctype_printname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_doctype_printname"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_doctype_printname"/>
+	</field>
+	<field name="ad_orginfo_email" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ad_orginfo_email"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_orginfo_email"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
+	</field>
+	<field name="c_tax_taxindicator" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_tax_taxindicator"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_tax_taxindicator"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_tax"/>
+	</field>
+	<field name="c_orderline_pricelist" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_orderline_pricelist"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_orderline_pricelist"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="c_uom_uomsymbol" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_uom_uomsymbol"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_uom_uomsymbol"/>
+	</field>
+	<field name="c_orderline_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_orderline_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_orderline_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="c_order_grandtotal" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_grandtotal"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_grandtotal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_order"/>
+	</field>
+	<field name="c_order_docstatus" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_docstatus"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_docstatus"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_order"/>
+	</field>
+	<field name="c_orderline_help" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_orderline_help"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_orderline_help"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="c_bpartner_dropship_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_bpartner_dropship_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bpartner_dropship_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
+	</field>
+	<field name="c_location_dropship_address1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_dropship_address1"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_dropship_address1"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_location_dropship_city" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_dropship_city"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_dropship_city"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_location_dropship_postal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_dropship_postal"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_dropship_postal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_location_dropship_regionname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_location_dropship_regionname"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_location_dropship_regionname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="c_country_dropship_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_country_dropship_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_country_dropship_name"/>
+	</field>
+	<field name="c_order_isdropship" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_isdropship"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_isdropship"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_order"/>
+	</field>
+	<field name="m_shipper_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="m_shipper_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_shipper_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_shipper"/>
+	</field>
+	<field name="lit_freightcost_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lit_freightcost_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_freightcost_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="lit_tables"/>
+	</field>
+	<field name="c_bank_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_bank_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bank_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="lit_c_bank_v"/>
+	</field>
+	<field name="c_bankaccount_iban" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_bankaccount_iban"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bankaccount_iban"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="lit_c_bank_v"/>
+	</field>
+	<field name="c_bank_swiftcode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_bank_swiftcode"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_bank_swiftcode"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="lit_c_bank_v"/>
+	</field>
+	<field name="c_order_note" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_note"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_note"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_order"/>
+	</field>
+	<field name="c_project_value" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_project_value"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_project_value"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_project"/>
+	</field>
+	<field name="c_orderline_datepromised" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="c_orderline_datepromised"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_orderline_datepromised"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_orderline"/>
+	</field>
+	<field name="m_product_po_vendorproductno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="m_product_po_vendorproductno"/>
+		<property name="com.jaspersoft.studio.field.label" value="m_product_po_vendorproductno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_product_po"/>
+	</field>
+	<field name="ad_orginfo_lit_report_param" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ad_orginfo_lit_report_param"/>
+		<property name="com.jaspersoft.studio.field.label" value="ad_orginfo_lit_report_param"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_orginfo"/>
+	</field>
+	<field name="c_order_lit_termsandconditions_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_lit_termsandconditions_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_lit_termsandconditions_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="lit_tables"/>
+	</field>
+	<field name="c_order_lit_termsandconditions_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_lit_termsandconditions_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_lit_termsandconditions_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="lit_tables"/>
+	</field>
+	<field name="c_order_lit_exclusion_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_lit_exclusion_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_lit_exclusion_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="lit_tables"/>
+	</field>
+	<field name="c_order_lit_exclusion_description" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="c_order_lit_exclusion_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="c_order_lit_exclusion_description"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="lit_tables"/>
+	</field>
+	<pageHeader>
+		<band height="305">
+			<image scaleImage="RetainShape" hAlign="Left" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="-20" y="0" width="595" height="80" uuid="c7f13ab5-398a-4dcf-b842-b71eb83ca5ef"/>
+				<imageExpression><![CDATA[$F{header_image}]]></imageExpression>
+			</image>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="352" y="175" width="56" height="20" forecolor="#333333" uuid="2d8d842d-412d-46c2-853d-64a66e25a5ea"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("DateOrdered")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="480" y="175" width="41" height="20" forecolor="#333333" uuid="05348245-6483-4a6d-b8bf-26ec0e8d579d"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("Page")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="309" y="96" width="70" height="13" isRemoveLineWhenBlank="true" forecolor="#333333" uuid="514c165e-c1d5-494e-a0e9-09c07ec3356f"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_402_ShipTo")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="32" y="108" width="228" height="14" isRemoveLineWhenBlank="true" uuid="b547a240-05fc-49e5-a750-a764aff833d9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_bpartner_name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="32" y="122" width="228" height="14" uuid="ab3a9a08-b610-48fb-8818-0f2595fcfd53"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_location_address1}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="408" y="175" width="72" height="20" uuid="747bf242-8990-4109-a52b-c6825d833799"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_dateordered}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="210" y="175" width="142" height="20" uuid="6353f2b5-1e67-4a29-befe-b52a61768fd8"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_documentno}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="32" y="136" width="228" height="14" uuid="5b54322a-0c20-4372-bfea-261e4a171638"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{c_location_postal} == null ? " " : $F{c_location_postal}) + " "+ ($F{c_location_city} == null ? " " : $F{c_location_city}) +" "+($F{c_location_regionname} == null ? " " : $F{c_location_regionname})+" " +($F{c_country_name} == null ? " " : $F{c_country_name})]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="0" y="175" width="130" height="20" uuid="2b60beed-4862-466d-a560-ac2ddc2ecd43"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{c_order_docstatus}.equals("CO")?" "+$F{c_doctype_printname}:$F{c_doctype_name})]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="521" y="175" width="34" height="20" uuid="22531d29-e32b-4f3b-9db6-0db1150a1526"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="309" y="151" width="236" height="12" isRemoveLineWhenBlank="true" uuid="4e4e3561-c225-4c76-a428-4e59c96355c2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<printWhenExpression><![CDATA[$F{ad_orginfo_email} !=null]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("EMail") +": "+($F{ad_orginfo_email} == null ? " " : $F{ad_orginfo_email})]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="32" y="150" width="228" height="12" isRemoveLineWhenBlank="true" uuid="ca71a19f-cf9f-4cca-bea1-87ebe2483ab0">
+					<printWhenExpression><![CDATA[$F{c_bpartner_location_phone} !=null]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("Phone") + ": " + ($F{c_bpartner_location_phone} == null ? " " : $F{c_bpartner_location_phone})]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="130" y="175" width="80" height="20" uuid="f60cf040-d850-42db-b4fa-c9973dd59ccc"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("DocumentNo")]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="309" y="123" width="236" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="40d8a2be-c026-4e81-b336-319643c33459">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_isdropship}.equals("Y") ? $F{c_location_dropship_address1} : $F{c_location_warehouse_address1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="309" y="137" width="236" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="8a940ee9-bc86-448a-8f80-3ee69b2d52fc">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_isdropship}.equals("Y") ? 
+(($F{c_location_dropship_postal} == null ? " " : $F{c_location_dropship_postal}) + " "+ ($F{c_location_dropship_city} == null ? " " : $F{c_location_dropship_city}) +" "+($F{c_location_dropship_regionname} == null ? " " : $F{c_location_dropship_regionname})+" " +($F{c_country_dropship_name} == null ? " " : $F{c_country_dropship_name}))
+:
+(
+	($F{c_location_warehouse_postal} == null ? "" : $F{c_location_warehouse_postal}) + " "+ ($F{c_location_warehouse_city} == null ? "" : $F{c_location_warehouse_city}) +" "+($F{c_location_warehouse_regionname} == null ? "" : $F{c_location_warehouse_regionname})+" " +($F{c_country_warehouse_name} == null ? "" : $F{c_country_warehouse_name})
+)]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" mode="Transparent" x="309" y="109" width="236" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="d7157fdc-3acd-4db8-a220-af7bfee4c2d9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_isdropship}.equals("Y") ? $F{c_bpartner_dropship_name} : $F{m_warehouse_name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="32" y="95" width="70" height="13" isRemoveLineWhenBlank="true" forecolor="#333333" uuid="eb098bb5-560d-4312-9095-ff709ba25686"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_402_TitleFirm")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="232" width="100" height="10" forecolor="#333333" uuid="ab73d2c2-0ef7-4896-ad50-d27f23831d98"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("PaymentRule")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="205" width="100" height="10" forecolor="#333333" uuid="9156c763-70bf-489c-bd6f-db97444e4cb3"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("DatePromised")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="100" y="205" width="115" height="10" forecolor="#333333" uuid="dbd65ad7-4b9c-44d4-85d2-da6d77777551"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("POReference")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="100" y="232" width="115" height="10" forecolor="#333333" uuid="64ae57cd-f87d-4179-9117-8cfab4555cf2">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("C_PaymentTerm_ID")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="215" width="100" height="12" uuid="7540ae68-da97-4b1d-a21a-f041d04ad34d"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_datepromised}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="100" y="215" width="115" height="12" uuid="12b2333a-55f8-4fd4-834a-a3512708b8f5"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ad_user_name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="100" y="242" width="115" height="12" isRemoveLineWhenBlank="true" uuid="7f377f5a-d641-4884-b7ed-826deeced5da"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_paymentterm_name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="242" width="100" height="12" isRemoveLineWhenBlank="true" uuid="196f7589-3fda-46dd-948e-d18a74ce3e15"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_paymentrule}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="291" width="555" height="14" isRemoveLineWhenBlank="true" uuid="d7870970-44a5-4544-bb36-bbd96ce4d722"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_description}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="215" y="205" width="115" height="10" forecolor="#333333" uuid="14f16612-0ef4-46e6-907c-8d9744193a76"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("FOB")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="215" y="215" width="115" height="12" uuid="fac3110b-e1c0-4f67-b57a-fdb01baf5f6e"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lit_freightcost_name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="215" y="232" width="115" height="10" forecolor="#333333" uuid="cf44776e-f4af-4b68-b792-e9ee0cba0e7e">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("DeliveryViaRule")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="215" y="242" width="115" height="12" isRemoveLineWhenBlank="true" uuid="bf9c105f-e21d-49b0-965a-edf2a0d1b84f"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_deliveryviarule}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="330" y="205" width="110" height="10" forecolor="#333333" uuid="13edba50-c4d1-434a-a1b9-e2cc3d2e8b82"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("C_Currency_ID")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="330" y="215" width="110" height="12" uuid="c7616cc1-d0c9-4745-a384-32bfdada6554"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_currency_iso_code}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="440" y="205" width="115" height="10" forecolor="#333333" uuid="154abb2d-9161-4095-9db0-efc023818742"/>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("C_Project_ID")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="440" y="215" width="115" height="12" uuid="e209ba61-022e-414b-86db-974ebeb4f438"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_project_value}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="330" y="232" width="115" height="10" forecolor="#333333" uuid="b4ddd5b9-2c0c-49fb-93a5-5270aa6215fd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("M_Shipper_ID")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="330" y="242" width="115" height="12" isRemoveLineWhenBlank="true" uuid="51c6568f-c88a-43d6-8e29-935e9b4de6bb"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_shipper_name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="259" width="555" height="10" forecolor="#333333" uuid="80241495-e5d4-4ca1-932d-b983b4c815de">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("C_BankAccount_ID")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="269" width="555" height="12" isRemoveLineWhenBlank="true" uuid="b2e59b99-a24f-41c0-875e-2ab6868ff1b2"/>
+				<box leftPadding="10" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("C_Bank_ID") +" : "+ ($F{c_bank_name} == null ? "" : $F{c_bank_name}) + "     " + str("IBAN")+" : "+($F{c_bankaccount_iban} == null ? "" : $F{c_bankaccount_iban}) +"     "+str("SwiftCode") +" : "+ ($F{c_bank_swiftcode} == null ? "" : $F{c_bank_swiftcode})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="15">
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="0" y="0" width="88" height="15" forecolor="#333333" uuid="a35d915f-be8d-4078-8496-0256cff4860a">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("M_Product_ID")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="88" y="0" width="170" height="15" forecolor="#333333" uuid="874b41e9-b40c-4bb7-9f01-3382222aacb0">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("ProductDescription")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="258" y="0" width="39" height="15" forecolor="#333333" uuid="fea85fe9-598d-4660-8e86-877db3cd9346">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("C_UOM_ID")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="297" y="0" width="48" height="15" forecolor="#333333" uuid="77ca4c73-6892-4311-aff5-b5e4432b570c">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("Qty")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="345" y="0" width="55" height="15" forecolor="#333333" uuid="3f1b8782-d8f5-4451-923c-49fad18d4eba">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("PriceList")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="400" y="0" width="52" height="15" forecolor="#333333" uuid="d3d10761-f436-4838-8df2-2dcc4e664045">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("Discount")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="452" y="0" width="62" height="15" forecolor="#333333" uuid="2daa5ccd-2c0c-4873-bc37-46a474f843fa">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("Amt")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="514" y="0" width="41" height="15" forecolor="#333333" uuid="584aed38-6ac0-418d-a440-8a7aaa491af7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("C_Tax_ID")]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="0" y="0" width="88" height="15" uuid="b048bbc0-a4d4-4670-9f30-d86572eb4673">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{m_product_po_vendorproductno} != null ? $F{ad_orginfo_lit_report_param}.charAt(3) + $F{m_product_po_vendorproductno} : $F{m_product_value}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="88" y="0" width="170" height="15" uuid="2443a8d6-fc04-4ed5-aa41-e4f92d50a990">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_orderline_name} != null ? $F{c_orderline_name} :$F{m_product_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="258" y="0" width="39" height="15" uuid="4caec870-6343-4747-b771-91f0e651de35">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_uom_uomsymbol}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.###" isBlankWhenNull="false">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="297" y="0" width="48" height="15" uuid="81dc14dd-fc0f-400f-9ac9-1fb37f5d1abd">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_orderline_qtyentered}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="345" y="0" width="55" height="15" uuid="38368a23-fde0-4bfa-b546-68fe6c8b27aa">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_orderline_pricelist}.doubleValue() > 10 ?
+new DecimalFormat("#,##0.00").format($F{c_orderline_pricelist}):
+new DecimalFormat("#,##0.00000").format($F{c_orderline_pricelist})]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="400" y="0" width="52" height="15" uuid="6cfccc71-b6e3-49c7-9800-762812cbcb5b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new DecimalFormat("0.0").format($F{c_orderline_discount}) + " %"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="452" y="0" width="62" height="15" uuid="1ec4215a-4df1-45d3-8882-95916e6acee9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_orderline_linenetamt}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="514" y="0" width="41" height="15" uuid="bdc9edf7-f0fc-4e77-adf3-c619c41c4797">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_tax_taxindicator}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="15">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="0" y="0" width="555" height="15" isRemoveLineWhenBlank="true" uuid="a0be1045-1859-4662-aca5-c5c8718a12c4">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_orderline_description}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="15">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement style="EasyRead" positionType="Float" stretchType="ContainerHeight" x="0" y="0" width="555" height="15" isRemoveLineWhenBlank="true" uuid="001a8402-446a-47a3-b7db-e45bc43fc787">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_orderline_help}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="96">
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
+				<reportElement positionType="FixRelativeToBottom" x="-20" y="16" width="595" height="80" isRemoveLineWhenBlank="true" uuid="570e5a42-72d7-4ba5-ae45-e194555df0df">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{footer_image}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="6" width="260" height="10" uuid="44909456-f506-4024-baf3-7645293c10f2"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RP.402 - " + str("DatePrinted") + ": " + DATEFORMAT(NOW( ),$F{datepattern} + " " + $F{timepattern})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="150">
+			<textField isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="342" y="7" width="86" height="15" forecolor="#333333" uuid="89002961-4cfa-410b-81a3-d4270f0aa1c5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("GrandTotal")]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement style="Header" positionType="Float" x="463" y="7" width="82" height="15" uuid="4fc5c5b4-8fb4-42e7-ad75-766a8dabee36">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_grandtotal}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement style="Header" mode="Opaque" x="428" y="7" width="36" height="15" uuid="569b7d2f-e299-4655-9e25-fa2a6e3506db">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_currency_iso_code}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
+				<reportElement positionType="FixRelativeToBottom" x="-20" y="70" width="595" height="80" isRemoveLineWhenBlank="true" uuid="6767c1c0-a7f1-40e9-a323-ce593dfa27d8">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{footer_image}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="60" width="260" height="10" uuid="a56f947d-2432-456d-9fc6-18757b713349"/>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["RP.402 - " + str("DatePrinted") + ": " + DATEFORMAT(NOW( ),$F{datepattern} + " " + $F{timepattern})]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement x="15" y="7" width="200" height="20" uuid="ac9a771c-5cdb-4c16-97fe-388903482dfd">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="VATSummary" uuid="c12bbeb4-7c34-4c5d-9241-4fb811b773bf">
+						<datasetParameter name="RECORD_ID">
+							<datasetParameterExpression><![CDATA[$P{RECORD_ID}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="50" uuid="2a22a684-8138-4743-a3e0-d9fd0225a286">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna1"/>
+						<jr:columnHeader style="Header" height="10">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<textField textAdjust="ScaleFont">
+								<reportElement x="0" y="0" width="50" height="10" uuid="fff0f923-fb5f-4f03-911e-8dcf2ddde69b"/>
+								<box leftPadding="2" rightPadding="2"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[str("TaxName")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="EasyRead" height="10">
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<textField textAdjust="ScaleFont">
+								<reportElement x="0" y="0" width="50" height="10" uuid="d09cf6dc-6a4d-451f-8e7b-694e576e6577"/>
+								<box leftPadding="2" rightPadding="2"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{c_tax_taxindicator}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50" uuid="b06aa4e1-f649-4314-bb66-5421c3a437d1">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna2"/>
+						<jr:columnHeader style="Header" height="10">
+							<textField textAdjust="ScaleFont">
+								<reportElement x="0" y="0" width="50" height="10" uuid="20093b88-af31-45bc-827c-f35f087bf49c"/>
+								<box leftPadding="2" rightPadding="2"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[str("TaxBaseAmt")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="EasyRead" height="10">
+							<textField textAdjust="ScaleFont" pattern="0.00">
+								<reportElement x="0" y="0" width="50" height="10" uuid="77d94293-a867-4e58-b07c-b0fe809900f5"/>
+								<box leftPadding="2" rightPadding="2"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{c_ordertax_taxbaseamt}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50" uuid="8626e728-4f06-45e4-89eb-82d549637b60">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna3"/>
+						<jr:columnHeader style="Header" height="10">
+							<textField textAdjust="ScaleFont">
+								<reportElement x="0" y="0" width="50" height="10" uuid="688d4826-a3c1-4ac3-b067-558155d1170f"/>
+								<box leftPadding="2" rightPadding="2"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[str("TaxAmt")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="EasyRead" height="10">
+							<textField textAdjust="ScaleFont" pattern="0.00">
+								<reportElement x="0" y="0" width="50" height="10" uuid="f634ee48-6b3b-4d18-8703-81843d6d5aba"/>
+								<box leftPadding="2" rightPadding="2"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{c_ordertax_taxamt}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="50" uuid="8fbc4d88-3d5c-4097-ba00-1a2841665350">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna4"/>
+						<jr:columnHeader style="Header" height="10">
+							<textField textAdjust="ScaleFont">
+								<reportElement x="0" y="0" width="50" height="10" uuid="1bfc9d77-d37f-4caa-b5be-0c3f36e71db4"/>
+								<box leftPadding="2" rightPadding="2"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[str("C_Currency_ID")]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="EasyRead" height="10">
+							<textField textAdjust="ScaleFont">
+								<reportElement x="0" y="0" width="50" height="10" uuid="0d0fc70b-bc39-4180-87bc-cc6624bd730d"/>
+								<box leftPadding="2" rightPadding="2"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font size="7"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{c_currency_iso_code}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band height="115">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="0" width="555" height="15" isRemoveLineWhenBlank="true" uuid="634e6013-d4f9-4044-81c5-c4fb64d2b236">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_note}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="35" width="555" height="15" isRemoveLineWhenBlank="true" uuid="c740ccc1-a5ea-469d-ae57-5ca703c7e390">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_lit_termsandconditions_name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="50" width="555" height="15" isRemoveLineWhenBlank="true" uuid="f5d2387c-d917-4051-b130-c57a72fdec90">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_lit_termsandconditions_description}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="85" width="555" height="15" isRemoveLineWhenBlank="true" uuid="e4479e40-3ccc-4af3-a29a-d21db3837153">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_lit_exclusion_name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="100" width="555" height="15" isRemoveLineWhenBlank="true" uuid="ab88ab96-41d1-4db4-b0fd-5d6d02744147">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement>
+					<font size="7"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{c_order_lit_exclusion_description}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="20" width="555" height="15" forecolor="#333333" uuid="8d634a8a-b411-4c36-802a-c7744fa78867">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_TermsAndConditions_ID")]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="ScaleFont" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="70" width="555" height="15" forecolor="#333333" uuid="7a992fc4-227f-454e-ae55-65762334faf1">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<box leftPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
+					<font size="10" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_Exclusion_ID")]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

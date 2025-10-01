@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="822 - Statement of account" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="0" bottomMargin="0" uuid="3f9a3fdd-695b-4142-9a11-97cd12201c0d">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="idempieredb-report"/>
+	<property name="com.jaspersoft.studio.report.description" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="Title"/>
+	<style name="SubTitle"/>
+	<style name="Address"/>
+	<style name="Telephone"/>
+	<style name="Fax"/>
+	<style name="Style6"/>
+	<parameter name="C_BPartner_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateAcctFrom" class="java.util.Date"/>
+	<parameter name="DateAcctTo" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOCALE_CODE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_LOCALE}.toString()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+	c_bpartner.name,
+	c_bpartner_location.phone,
+	c_bpartner_location.phone2,
+	c_bpartner_location.fax,
+	c_location.address1,
+	c_location.address2,
+	c_location.city,
+	c_location.postal,
+	c_location.postal_add,
+ 	lit_adorg_header_portrait_image(c_bpartner.ad_client_id, c_bpartner.ad_org_id),
+	lit_adorg_footer_portrait_image(c_bpartner.ad_client_id, c_bpartner.ad_org_id),
+	 lit_date_pattern($P{LOCALE_CODE}) AS datepattern
+from
+	c_bpartner
+left join c_bpartner_location on
+	c_bpartner.c_bpartner_id = c_bpartner_location.c_bpartner_id and c_bpartner_location.isbillto = 'Y'
+left join c_location on
+	c_bpartner_location.c_location_id = c_location.c_location_id
+where
+	c_bpartner.c_bpartner_id = $P{C_BPartner_ID}]]>
+	</queryString>
+	<field name="name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="name"/>
+		<property name="com.jaspersoft.studio.field.label" value="name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner"/>
+	</field>
+	<field name="phone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="phone"/>
+		<property name="com.jaspersoft.studio.field.label" value="phone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner_location"/>
+	</field>
+	<field name="phone2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="phone2"/>
+		<property name="com.jaspersoft.studio.field.label" value="phone2"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner_location"/>
+	</field>
+	<field name="fax" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="fax"/>
+		<property name="com.jaspersoft.studio.field.label" value="fax"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_bpartner_location"/>
+	</field>
+	<field name="address1" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address1"/>
+		<property name="com.jaspersoft.studio.field.label" value="address1"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="address2" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="address2"/>
+		<property name="com.jaspersoft.studio.field.label" value="address2"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="city" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="city"/>
+		<property name="com.jaspersoft.studio.field.label" value="city"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="postal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="postal"/>
+		<property name="com.jaspersoft.studio.field.label" value="postal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="postal_add" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="postal_add"/>
+		<property name="com.jaspersoft.studio.field.label" value="postal_add"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="c_location"/>
+	</field>
+	<field name="lit_adorg_header_portrait_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_header_portrait_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_header_portrait_image"/>
+	</field>
+	<field name="lit_adorg_footer_portrait_image" class="byte[]">
+		<property name="com.jaspersoft.studio.field.name" value="lit_adorg_footer_portrait_image"/>
+		<property name="com.jaspersoft.studio.field.label" value="lit_adorg_footer_portrait_image"/>
+	</field>
+	<field name="datepattern" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="datepattern"/>
+		<property name="com.jaspersoft.studio.field.label" value="datepattern"/>
+	</field>
+	<variable name="TOTALS" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{TOTALS}]]></variableExpression>
+	</variable>
+	<group name="group1">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="group2">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band height="19" splitType="Stretch">
+				<subreport isUsingCache="true">
+					<reportElement key="subreport-10" x="0" y="5" width="535" height="14" uuid="95697ed0-b1b4-4987-907f-f9989b5bf0d5"/>
+					<subreportParameter name="DateAcctFrom">
+						<subreportParameterExpression><![CDATA[$P{DateAcctFrom}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="BASE_PATH">
+						<subreportParameterExpression><![CDATA[$P{BASE_PATH}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="DateAcctTo">
+						<subreportParameterExpression><![CDATA[$P{DateAcctTo}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="C_BPartner_ID">
+						<subreportParameterExpression><![CDATA[$P{C_BPartner_ID}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{BASE_PATH}+"invoices_and_payments_and_opening_bal_cust.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="group3">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="group4">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="group5">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band height="19" splitType="Stretch">
+				<staticText>
+					<reportElement x="107" y="4" width="316" height="15" uuid="5e76e94a-b1cb-4f6b-85d2-e00f37bbf734"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[MANCA SOTTOREPORT]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="group6">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="203" splitType="Stretch">
+			<image onErrorType="Blank">
+				<reportElement x="-30" y="0" width="595" height="70" isRemoveLineWhenBlank="true" uuid="b9d5bcb6-2f6d-4c27-aef2-9e85ad44906f">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{lit_adorg_header_portrait_image}]]></imageExpression>
+			</image>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField-1" x="0" y="73" width="535" height="24" forecolor="#000000" uuid="92c7c01a-1f5c-44db-8e1f-2e733a2895d5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("LIT_RP_822_Title") + " - " + $F{name}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField-2" style="SubTitle" x="0" y="97" width="535" height="15" forecolor="#000000" uuid="2c750ffc-9757-4bd2-af10-cb38f6db8cd1"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat($F{datepattern}).format($P{DateAcctFrom}) + " - " + new SimpleDateFormat($F{datepattern}).format($P{DateAcctTo})]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement key="textField-3" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="139" width="304" height="15" uuid="33397a79-c2a7-43bc-9e9f-984fa4695e3f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{address1}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement key="textField-4" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="154" width="304" height="15" isRemoveLineWhenBlank="true" uuid="f79423a8-c13e-4e99-9ea0-840771ed7a6d">
+					<printWhenExpression><![CDATA[new Boolean($F{address2}!=null)]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{address2}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement key="textField-6" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="184" width="304" height="15" uuid="8358cbef-94de-4d3c-af08-a99da22342ac"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{postal}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement key="textField-7" positionType="Float" stretchType="RelativeToTallestObject" x="384" y="139" width="150" height="15" uuid="1524e70e-eaa6-4a75-9668-f69badecb83f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{phone}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement key="textField-8" positionType="Float" stretchType="RelativeToTallestObject" x="384" y="154" width="150" height="15" isRemoveLineWhenBlank="true" uuid="9abfd44a-3f65-43ac-b9c8-2606fc1178f1">
+					<printWhenExpression><![CDATA[new Boolean($F{phone2}!=null)]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{phone2}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+				<reportElement key="textField-5" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="169" width="304" height="15" uuid="c6cae448-e0d8-4170-956a-4a68af3fe176"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{city}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="" mode="Transparent" x="0" y="123" width="214" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="54e2f9b4-9064-4029-b4a4-c4230e021655"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("BPartner")]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement key="staticText-2" style="Telephone" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="384" y="124" width="80" height="15" forecolor="#000000" backcolor="#FFFFFF" uuid="204fdaae-a8be-4262-b631-31e141ec8299"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[str("Phone")]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Prevent"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch">
+			<image onErrorType="Blank">
+				<reportElement x="-30" y="22" width="595" height="70" isRemoveLineWhenBlank="true" uuid="8ebd92f1-3978-464a-9b80-9f6b7a729ba5">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$F{lit_adorg_footer_portrait_image}]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="10">
+			<staticText>
+				<reportElement positionType="Float" mode="Transparent" x="1" y="0" width="555" height="9" forecolor="#999999" uuid="1062c208-165a-4226-b5a7-9883438de3d3"/>
+				<textElement textAlignment="Center">
+					<font fontName="Dialog" size="5" isBold="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[printed using iDempiere Erp info@idempiereitalia.com ver 1.70804 - rep.0312]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

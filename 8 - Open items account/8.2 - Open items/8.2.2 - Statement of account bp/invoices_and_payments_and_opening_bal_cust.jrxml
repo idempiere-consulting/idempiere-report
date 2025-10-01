@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.17.0.final utlizzo versione della libreria JasperReports6.17.0-6d93193241dd8cc42629e188b94f9e0bc5722efd  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoices_and_payments_and_opening_bal_cust" pageWidth="535" pageHeight="842" whenNoDataType="NoPages" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="83d6d6e0-882a-49bf-bb2f-39115d487b43">
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<parameter name="C_BPartner_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new Integer (1000000)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateAcctFrom" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date(100,0,1)]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DateAcctTo" class="java.util.Date">
+		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="BASE_PATH" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TOTALS" class="java.util.HashMap" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new java.util.HashMap()]]></defaultValueExpression>
+	</parameter>
+	<parameter name="RESOURCE_DIR" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA["./"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select inv.DATEINVOICED as DateTrx ,inv.DOCUMENTNO,doc.Name,
+	 CASE WHEN inv.DESCRIPTION is null THEN ( SELECT pro.NAME FROM M_PRODUCT pro,C_INVOICELINE il
+         	   WHERE inv.C_INVOICE_ID=il.C_INVOICE_ID
+         	  AND il.M_PRODUCT_ID=pro.M_PRODUCT_ID LIMIT 1)
+	  ELSE inv.DESCRIPTION END AS DESCRIPTION,
+CASE WHEN doc.docbasetype IN ('ARC') THEN
+	inv.GRANDTOTAL*-1
+ELSE
+	inv.GRANDTOTAL
+END AS "GRANDTOTAL"
+from C_INVOICE inv,C_DOCTYPE doc
+WHERE inv.C_DOCTYPE_ID=doc.C_DOCTYPE_ID AND inv.DOCSTATUS IN ('CO','CL')
+AND doc.docbasetype IN ('ARI','ARC')
+AND inv.C_BPARTNER_ID = $P{C_BPartner_ID}
+AND (inv.DATEINVOICED >= $P{DateAcctFrom} and inv.DATEINVOICED <= $P{DateAcctTo} )
+UNION
+select pa.DATETRX as DateTrx,pa.DOCUMENTNO,'Discount' as NAME,
+'' AS DESCRIPTION,
+pa.discountamt * -1
+from C_PAYMENT pa ,C_DOCTYPE doc
+WHERE pa.C_DOCTYPE_ID=doc.C_DOCTYPE_ID AND pa.DOCSTATUS IN ('CO','CL')
+AND doc.docbasetype IN ('ARR')
+AND pa.C_BPARTNER_ID = $P{C_BPartner_ID}
+AND (pa.DATETRX >= $P{DateAcctFrom} and pa.DATETRX <= $P{DateAcctTo} )
+AND pa.discountamt > 0
+UNION
+select pa.DATETRX as DateTrx,pa.DOCUMENTNO,substr(doc.Name,4) as NAME,
+CASE WHEN pa.DESCRIPTION is not null THEN pa.DESCRIPTION
+     WHEN pa.C_INVOICE_ID is not null THEN (SELECT inv.DOCUMENTNO FROM C_INVOICE inv
+                                       WHERE inv.C_INVOICE_ID=pa.C_INVOICE_ID LIMIT 1)
+ELSE '' END AS DESCRIPTION,
+(pa.PAYAMT * -1)-pa.writeoffamt
+from C_PAYMENT pa ,C_DOCTYPE doc
+WHERE pa.C_DOCTYPE_ID=doc.C_DOCTYPE_ID AND pa.DOCSTATUS IN ('CO','CL')
+AND doc.docbasetype IN ('ARR')
+AND pa.C_BPARTNER_ID = $P{C_BPartner_ID}
+AND (pa.DATETRX >= $P{DateAcctFrom} and pa.DATETRX <= $P{DateAcctTo} )
+ORDER BY DateTrx]]>
+	</queryString>
+	<field name="DATETRX" class="java.sql.Timestamp"/>
+	<field name="DOCUMENTNO" class="java.lang.String"/>
+	<field name="NAME" class="java.lang.String"/>
+	<field name="DESCRIPTION" class="java.lang.String"/>
+	<field name="GRANDTOTAL" class="java.lang.Double"/>
+	<variable name="RUNNINGBAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{GRANDTOTAL}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL" class="java.lang.Double" calculation="System"/>
+	<group name="group1">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<group name="group2">
+		<groupExpression><![CDATA[null]]></groupExpression>
+		<groupHeader>
+			<band splitType="Stretch"/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Stretch"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="31" splitType="Stretch">
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-1" x="0" y="5" width="535" height="18" uuid="83b0d499-1d84-476e-915e-3a9bc50317e0"/>
+				<subreportParameter name="DateAcctFrom">
+					<subreportParameterExpression><![CDATA[$P{DateAcctFrom}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="C_BPartner_ID">
+					<subreportParameterExpression><![CDATA[$P{C_BPartner_ID}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<returnValue subreportVariable="TOTALS" toVariable="TOTAL" calculation="Sum"/>
+				<subreportExpression><![CDATA[$P{BASE_PATH} + "openning_balance_cust_osgi.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="19" splitType="Stretch">
+			<staticText>
+				<reportElement key="element-90" mode="Opaque" x="0" y="1" width="77" height="18" forecolor="#003333" backcolor="#FFFFFF" uuid="de5514a7-3dad-4070-81a9-bf32e6d53600"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Data]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-90" mode="Opaque" x="77" y="1" width="66" height="18" forecolor="#003333" backcolor="#FFFFFF" uuid="03a1d8c1-fe48-4cc3-b831-cb68070bbde8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Doc. ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-90" mode="Opaque" x="143" y="1" width="64" height="18" forecolor="#003333" backcolor="#FFFFFF" uuid="3c3a225c-4758-4ff7-9a3c-685b8c056637"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Tipo di Documento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-90" mode="Opaque" x="207" y="1" width="165" height="18" forecolor="#003333" backcolor="#FFFFFF" uuid="5c655d49-53ec-4925-b475-100e920877b7"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Descrizione]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-90" mode="Opaque" x="372" y="1" width="81" height="18" forecolor="#003333" backcolor="#FFFFFF" uuid="b1fd7f92-3c0a-4078-b445-a5539b7eada1"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Importo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="element-91" mode="Opaque" x="453" y="1" width="82" height="18" forecolor="#003333" backcolor="#FFFFFF" uuid="9eccbb67-90a6-47b2-b0ff-69a4259424c8"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="7" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Bilancio Attuale]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<line>
+				<reportElement key="line" positionType="FixRelativeToBottom" x="0" y="21" width="535" height="1" forecolor="#808080" uuid="c3a1b94a-9309-4f9c-99a7-8930e1f35566"/>
+				<graphicElement>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField textAdjust="StretchHeight" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="1" width="77" height="22" uuid="74ed189b-69aa-4bed-968b-41d298fbf8e4"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DATETRX}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" stretchType="RelativeToTallestObject" x="77" y="1" width="66" height="22" uuid="d4c24fec-1a98-49a5-abc6-e0038f649de9"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOCUMENTNO}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" stretchType="RelativeToTallestObject" x="143" y="1" width="64" height="22" uuid="52b024d9-521e-47d0-ae9a-6273f18eab66"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" stretchType="RelativeToTallestObject" x="207" y="1" width="165" height="22" uuid="680cf4eb-0cde-4c8f-9ed5-96339476304d"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField" positionType="Float" stretchType="RelativeToTallestObject" x="372" y="1" width="81" height="22" uuid="133cd741-4ae1-4882-abc6-592f5564520b"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GRANDTOTAL}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-1" positionType="Float" stretchType="RelativeToTallestObject" x="453" y="1" width="82" height="22" uuid="ac1bc838-bd40-497a-a05a-0091ea56e11b"/>
+				<box leftPadding="2" rightPadding="2">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Double($V{TOTAL}.doubleValue() + $V{RUNNINGBAL}.doubleValue())]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
